@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteer Program Management (CRUD Storyboard)</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Inter font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+    
+        body {
+            font-family: 'Inter', sans-serif;
+            /* New Background Color: #FCF2BB */
+            background-color: #fcf2bb;
+        }
+        /* Custom scrollbar for better appearance */
+        .custom-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background-color: #f4d10b; /* Scrollbar color matching hover color */
+            border-radius: 10px;
+        }
+        /* Define custom Tailwind colors for easier maintenance */
+        .color-primary { color: #F7DE4F; }
+        .color-primary-dark { color: #F4D10B; }
+        .bg-primary { background-color: #F7DE4F; }
+        .bg-primary-hover:hover { background-color: #F4D10B; }
+
+        /* Custom style for the main button color */
+        .btn-custom {
+            background-color: #F7DE4F; /* Button Color */
+            color: #1f2937; /* Dark text for contrast */
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        .btn-custom:hover {
+            background-color: #F4D10B; /* Button Hover Color */
+        }
+    </style>
+
+</head>
+<body class="min-h-screen p-4 md:p-8">
+
+    <div id="app" class="max-w-4xl mx-auto bg-white shadow-xl rounded-xl p-6 md:p-8">
+        <header class="mb-8">
+            <h1 class="text-4xl font-extrabold text-gray-900">Program Management Dashboard</h1>
+            <p class="text-gray-500">Find, join, and get involved in volunteer opportunities that inspire you—all in one place</p>
+        </header>
+
+        <div id="listView" class="view">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-semibold text-gray-800">Available Programs</h2>
+                <button onclick="showForm()" class="btn-custom py-2 px-4 rounded-lg shadow-md flex items-center">
+                    Create 
+                </button>
+            </div>
+
+         
+            <div id="programList" class="space-y-4 custom-scroll max-h-96 overflow-y-auto pr-2">
+                <!-- Programs will be injected here by renderPrograms() -->
+                <p class="text-center text-gray-400 p-4">
+                    Loading programs...
+                </p>
+            </div>
+        </div>
+
+        <div id="formView" class="view hidden">
+            <h2 id="formTitle" class="text-2xl font-semibold text-gray-800 mb-6">Create New Program</h2>
+            <form id="programForm" class="space-y-4">
+                <input type="hidden" id="programId">
+                <div>
+                    <label for="title" class="block text-sm font-medium text-gray-700">Program Title</label>
+                    <input type="text" id="title" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:border-indigo-500 focus:ring-indigo-500" placeholder="e.g., Beach Clean-Up" required>
+                </div>
+                <div>
+                    <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                    <textarea id="description" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:border-indigo-500 focus:ring-indigo-500" placeholder="Provide a brief description of the activities and goals." required></textarea>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
+                        <input type="date" id="date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:border-indigo-500 focus:ring-indigo-500" required>
+                    </div>
+                    <div>
+                        <label for="location" class="block text-sm font-medium text-gray-700">Location</label>
+                        <input type="text" id="location" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:border-indigo-500 focus:ring-indigo-500" placeholder="e.g., City Center, School Hall" required>
+                    </div>
+                </div>
+                <div class="pt-4 flex justify-end space-x-3">
+                    <button type="button" onclick="showView('listView')" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-200">
+                        Cancel
+                    </button>
+                    <button type="submit" id="saveButton" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition duration-200">
+                        Save 
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Delete Confirmation Modal (DELETE) -->
+        <div id="deleteModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div class="bg-white rounded-lg shadow-2xl w-full max-w-sm p-6 transform transition-all">
+                <h3 class="text-xl font-semibold text-red-600 mb-4">Confirm Deletion</h3>
+                <p class="text-gray-700 mb-6">Are you sure you want to permanently delete the program: <strong id="programToDeleteTitle"></strong>?</p>
+                <p class="text-sm text-gray-500 mb-6">This action cannot be undone.</p>
+                <div class="flex justify-end space-x-3">
+                    <button onclick="hideDeleteConfirm()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-200">
+                        Cancel
+                    </button>
+                    <button onclick="confirmDelete()" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition duration-200" id="confirmDeleteButton">
+                        Yes, Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. LOCAL DATA MANAGEMENT (Simulating a database) ---
+        const STORAGE_KEY = 'volunteerPrograms';
+        let programs = []; // The main array holding all program data
+        let programToDelete = null;
+
+        // Utility to generate a unique ID (like a database would)
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+        }
+
+        // Utility to load data from browser's localStorage (READ persistence)
+        function loadPrograms() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            if (data) {
+                try {
+                    programs = JSON.parse(data);
+                    // Ensure createdAt timestamp exists for sorting
+                    programs.forEach(p => {
+                        if (!p.createdAt) p.createdAt = Date.now();
+                    });
+                } catch (e) {
+                    console.error("Could not parse programs from localStorage.", e);
+                    programs = [];
+                }
+            } else {
+                // Initialize with some mock data for first run (READ)
+                programs = [
+                    { id: generateId(), title: 'Community Clean-Up Day', description: 'A major initiative to clear litter and plant new saplings in the local park.', location: 'Taman Perdana', date: '2025-12-10', createdAt: Date.now() - 2000 },
+                    { id: generateId(), title: 'Digital Literacy Workshop', description: 'Teaching basic computer and internet skills to senior citizens in the area.', location: 'Community Hall', date: '2025-12-15', createdAt: Date.now() - 1000 }
+                ];
+            }
+            savePrograms(); // Save initial or loaded data back
+        }
+
+        // Utility to save data to browser's localStorage (CREATE/UPDATE/DELETE persistence)
+        function savePrograms() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(programs));
+            // Trigger the UI to re-render (like an onSnapshot listener)
+            renderPrograms(programs); 
+        }
+
+        // Utility to show status messages instead of alert()
+        function showStatus(message, type = 'success') {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.textContent = message;
+            statusEl.className = `fixed bottom-4 right-4 p-3 rounded-lg shadow-xl text-white ${type === 'success' ? 'bg-green-500' : 'bg-red-500'}`;
+            statusEl.classList.remove('hidden');
+            setTimeout(() => {
+                statusEl.classList.add('hidden');
+            }, 3000);
+        }
+
+        // --- 2. CRUD (C, U, D) OPERATIONS ---
+
+        // CREATE and UPDATE logic
+        document.getElementById('programForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const programId = document.getElementById('programId').value;
+            const title = document.getElementById('title').value.trim();
+            const description = document.getElementById('description').value.trim();
+            const date = document.getElementById('date').value.trim();
+            const location = document.getElementById('location').value.trim();
+
+            if (!title || !description || !date || !location) {
+                return showStatus("All fields are required.", 'error');
+            }
+
+            const programData = { title, description, date, location };
+
+            try {
+                if (programId) {
+                    // UPDATE operation
+                    const index = programs.findIndex(p => p.id === programId);
+                    if (index !== -1) {
+                        programs[index] = { ...programs[index], ...programData };
+                        showStatus("Program updated successfully!");
+                    } else {
+                        throw new Error("Program not found for update.");
+                    }
+                } else {
+                    // CREATE operation
+                    const newProgram = { 
+                        id: generateId(), 
+                        ...programData, 
+                        createdAt: Date.now() 
+                    };
+                    programs.push(newProgram);
+                    showStatus("New program created successfully!");
+                }
+                
+                savePrograms(); // Save and re-render the list
+                showView('listView'); // Go back to the list view after save
+
+            } catch (error) {
+                showStatus(`Save Error: ${error.message}`, 'error');
+                console.error("CRUD Save Error:", error);
+            }
+        });
+
+        // DELETE (Confirmed) operation
+        function confirmDelete() {
+            if (!programToDelete) {
+                return showStatus("No program selected for deletion.", 'error');
+            }
+
+            try {
+                // DELETE operation
+                programs = programs.filter(p => p.id !== programToDelete.id);
+                savePrograms(); // Save and re-render the list
+                showStatus(`Program '${programToDelete.title}' deleted successfully.`);
+            } catch (error) {
+                showStatus(`Delete Error: ${error.message}`, 'error');
+                console.error("CRUD Delete Error:", error);
+            } finally {
+                hideDeleteConfirm();
+            }
+        }
+        
+        window.confirmDelete = confirmDelete; // Expose to global scope for HTML calls
+
+        // --- 3. UI MANAGEMENT (Storyboarding/Flow) ---
+
+        function showView(viewId, data = {}) {
+            // Hide all views first
+            document.querySelectorAll('.view').forEach(el => el.classList.add('hidden'));
+            document.getElementById('deleteModal').classList.add('hidden');
+
+            // Show the requested view
+            const viewEl = document.getElementById(viewId);
+            if (viewEl) {
+                viewEl.classList.remove('hidden');
+            }
+        }
+        window.showView = showView; // Expose to global scope for HTML calls
+
+        // Show/Hide Form (Create or Update)
+        function showForm(mode, program = {}) {
+            const titleEl = document.getElementById('formTitle');
+            const saveBtn = document.getElementById('saveButton');
+            const form = document.getElementById('programForm');
+
+            form.reset(); // Clear previous data
+
+            if (mode === 'create') {
+                titleEl.textContent = 'Create New Program';
+                saveBtn.textContent = 'Save Program';
+                document.getElementById('programId').value = '';
+            } else if (mode === 'edit' && program.id) {
+                titleEl.textContent = `Edit Program: ${program.title}`;
+                saveBtn.textContent = 'Save Changes';
+                
+                // Populate form fields for update
+                document.getElementById('programId').value = program.id;
+                document.getElementById('title').value = program.title || '';
+                document.getElementById('description').value = program.description || '';
+                document.getElementById('date').value = program.date || '';
+                document.getElementById('location').value = program.location || '';
+            }
+            showView('formView');
+        }
+        window.showForm = showForm; // Expose to global scope for HTML calls
+
+        // Show Delete Confirmation Modal
+        function showDeleteConfirm(program) {
+            programToDelete = program;
+            document.getElementById('programToDeleteTitle').textContent = program.title;
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+        window.showDeleteConfirm = showDeleteConfirm; // Expose to global scope for HTML calls
+
+        // Hide Delete Confirmation Modal
+        function hideDeleteConfirm() {
+            document.getElementById('deleteModal').classList.add('hidden');
+            programToDelete = null;
+        }
+        window.hideDeleteConfirm = hideDeleteConfirm; // Expose to global scope for HTML calls
+
+        // --- 4. READ (Rendering the List) ---
+
+        function renderPrograms(programs) {
+            const listEl = document.getElementById('programList');
+            listEl.innerHTML = ''; // Clear existing content
+
+            // Sort by createdAt (newest first)
+            const sortedPrograms = programs.sort((a, b) => b.createdAt - a.createdAt);
+
+            if (sortedPrograms.length === 0) {
+                listEl.innerHTML = `
+                    <p class="text-center text-gray-500 py-10 border border-dashed rounded-lg">
+                        No volunteer programs found. Click "Create New Program" to add one.
+                    </p>
+                `;
+                return;
+            }
+
+            sortedPrograms.forEach(program => {
+                const card = document.createElement('div');
+                card.className = "program-card bg-gray-50 p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition duration-150";
+                
+                // Use program.id directly in the edit/delete functions
+                card.innerHTML = `
+                    <h3 class="text-xl font-semibold text-gray-700">${program.title}</h3>
+                    <p class="text-sm text-gray-500 mb-2">Location: ${program.location} | Date: ${program.date}</p>
+                    <p class="text-gray-600 mb-4">${program.description}</p>
+                    <div class="flex space-x-3">
+                        <button onclick="showForm('edit', {
+                            id: '${program.id}', 
+                            title: '${program.title.replace(/'/g, "\\'")}', 
+                            description: '${program.description.replace(/'/g, "\\'")}', 
+                            location: '${program.location.replace(/'/g, "\\'")}', 
+                            date: '${program.date}'
+                        })" class="text-sm font-medium text-blue-600 hover:text-blue-800 transition duration-150 p-1 rounded hover:bg-blue-100">
+                            Edit
+                        </button>
+                        <button onclick="showDeleteConfirm({id: '${program.id}', title: '${program.title.replace(/'/g, "\\'")}'})" class="text-sm font-medium text-red-600 hover:text-red-800 transition duration-150 p-1 rounded hover:bg-red-100">
+                            Delete
+                        </button>
+                    </div>
+                `;
+                listEl.appendChild(card);
+            });
+        }
+
+        // --- 5. INITIALIZATION ---
+        // Load data and render the initial list view
+        loadPrograms();
+    </script>
+</body>
+</html>
