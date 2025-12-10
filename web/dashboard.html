@@ -64,13 +64,13 @@
                 <!-- Main Navigation Links (Hidden on mobile) -->
                 <nav class="hidden md:flex space-x-8">
                     <a href="#home" class="nav-link font-semibold hover:text-links-hover py-2 rounded-lg transition duration-150 ease-in-out">HOME</a>
-                    <a href="#services" class="nav-link font-semibold hover:text-links-hover py-2 rounded-lg transition duration-150 ease-in-out">SERVICES</a>
+                    <a href="application.html" class="nav-link font-semibold hover:text-links-hover py-2 rounded-lg transition duration-150 ease-in-out">SERVICES</a>
                     <a href="#donations" class="nav-link font-semibold hover:text-links-hover py-2 rounded-lg transition duration-150 ease-in-out">DONATIONS</a>
                 </nav>
 
                 <!-- Login Button -->
                 <div class="flex items-center space-x-4">
-                    <a href="login.jsp" class="btn-primary px-5 py-2 text-sm font-bold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition duration-300 ease-in-out uppercase">
+                    <a id="login" href="login.jsp" class="btn-primary px-5 py-2 text-sm font-bold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition duration-300 ease-in-out uppercase">
                         LOGIN
                     </a>
 
@@ -86,7 +86,7 @@
         <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100">
             <div class="pt-2 pb-3 space-y-1 sm:px-3">
                 <a href="#home" class="nav-link block px-3 py-2 text-base font-medium">HOME</a>
-                <a href="#services" class="nav-link block px-3 py-2 text-base font-medium">SERVICES</a>
+                <a href="application.html" class="nav-link block px-3 py-2 text-base font-medium">SERVICES</a>
                 <a href="#donations" class="nav-link block px-3 py-2 text-base font-medium">DONATIONS</a>
             </div>
         </div>
@@ -107,7 +107,7 @@
                     <p class="text-lg text-gray-600 mb-8">
                         Join our movement to connect volunteers with meaningful service opportunities and create positive, lasting change in the lives of those who need it most.
                     </p>
-                    <a href="#services" class="btn-primary inline-flex items-center px-8 py-3 text-lg font-bold rounded-full shadow-xl hover:shadow-2xl">
+                    <a href="application.html" class="btn-primary inline-flex items-center px-8 py-3 text-lg font-bold rounded-full shadow-xl hover:shadow-2xl">
                         Explore Opportunities
                     </a>
                 </div>
@@ -212,6 +212,19 @@
                 document.getElementById('mobile-menu').classList.add('hidden');
             });
         });
+        
+         const urlParams = new URLSearchParams(window.location.search);
+        const logged = urlParams.get('logged'); // "admin" or "user"
+
+        if (logged) {
+            // Hide login button
+            document.getElementById('login').style.display = 'none';
+
+            // Optional: show welcome message
+            const welcome = document.createElement('p');
+            welcome.textContent = `Welcome, ${logged}!`;
+            document.body.appendChild(welcome);
+        }
     </script>
 </body>
 </html>

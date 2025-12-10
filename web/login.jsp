@@ -77,9 +77,27 @@
     </style>
 </head>
 <body>
+    <%
+    String username = request.getParameter("username");
+    String password = request.getParameter("password");
+
+    if (username != null && password != null) {
+
+        if (username.equals("admin") && password.equals("123")) {
+            response.sendRedirect("crud.html?logged=admin");
+            return;
+        } else if (username.equals("user") && password.equals("123")) {
+            response.sendRedirect("dashboard.html?logged=user");
+            return;
+        } else {
+            request.setAttribute("error", "Invalid login");
+        }
+    }
+%>
+
     <div class="login-container">
         <h1>E-Community Login</h1>
-        <form action="dashboard.html">
+        <form>
             <input type="text" name="username" placeholder="Username" required>
             <input type="password" name="password" placeholder="Password" required>
             <button type="submit">LOGIN</button>
@@ -88,3 +106,4 @@
     </div>
 </body>
 </html>
+
