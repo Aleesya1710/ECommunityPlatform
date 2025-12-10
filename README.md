@@ -1,2 +1,6 @@
+**dummy data**<br>
+username = staff, password = 123<br>
+username = user, password = 123
+
 ## ERD Diagram
-![ERD](./Web%20Pages/images/erdECommunity.png)
+![ERD](./web/images/erdECommunity.png)
