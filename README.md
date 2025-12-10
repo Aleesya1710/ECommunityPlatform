@@ -1,2 +1,2 @@
 ## ERD Diagram
-![ERD](./Web%20Pages/images/erdECommunity.png)
+![ERD](./web/images/erdECommunity.png)
