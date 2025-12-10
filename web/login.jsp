@@ -79,7 +79,7 @@
 <body>
     <div class="login-container">
         <h1>E-Community Login</h1>
-        <form action="dashboard.jsp" method="POST">
+        <form action="dashboard.html">
             <input type="text" name="username" placeholder="Username" required>
             <input type="password" name="password" placeholder="Password" required>
             <button type="submit">LOGIN</button>
