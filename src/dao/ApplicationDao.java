@@ -1,5 +1,6 @@
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import util.DBConnection;
 
 public class ApplicationDao {
 
@@ -12,7 +13,7 @@ public class ApplicationDao {
                      "(name, phoneNum, ICnum, userID, eventID) " +
                      "VALUES (?, ?, ?, ?, ?)";
 
-        try (Connection con = DBConnection.getConnection();
+        try (Connection con = DBConnection.createConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, name);

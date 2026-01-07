@@ -9,13 +9,11 @@ public class ApplicationServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        //get form data
         String name = request.getParameter("name");
         String phoneNum = request.getParameter("phoneNum");
         String ICnum = request.getParameter("ICnum");
         int eventID = Integer.parseInt(request.getParameter("eventID"));
 
-        //get userID from session (if logged in)
         HttpSession session = request.getSession(false);
         Integer userID = null;
 
