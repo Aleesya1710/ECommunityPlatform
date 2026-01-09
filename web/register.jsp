@@ -95,7 +95,7 @@
 <body>
     <div class="signup-container">
         <h1>Create Account</h1>
-        <form action="registerProcess.jsp" method="POST">
+        <form action="RegisterServlet" method="POST">
             <label> Full Name: </label>
             <input type="text" name="fullname" placeholder="Full Name" required>
 

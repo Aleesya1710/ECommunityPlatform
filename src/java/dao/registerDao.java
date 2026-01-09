@@ -6,14 +6,41 @@
 package dao;
 import java.sql.*;
 import util.DBConnection;
-import userBean.User;
+import bean.User;
 
 /**
  *
  * @author Hp V
  */
 public class registerDao {
-    public String authenticateUser(User user){
-        String 
+    Connection conn = DBConnection.createConnection();
+    boolean result = false;
+    PreparedStatement ps = null;
+    public boolean registerUser(User user) throws SQLException{
+        String name = user.getUsername();
+        String password = user.getPassword();
+        
+        String query = "Insert into users(username, password) values (?,?)";
+        
+        try{
+             ps = conn.prepareStatement(query);
+            ps.setString(1, name);
+            ps.setString(2, password);
+            result = ps.executeUpdate() > 0;
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return result;
+    }
+    
+    public boolean isUsernameExists(String username) throws SQLException{
+        String name = username;
+        
+        String query = "select username from users where username = ?";
+        ps = conn.prepareStatement(query);
+        ps.setString(1,name);
+        ResultSet rs = ps.executeQuery();     
+        return rs.next();
     }
 }

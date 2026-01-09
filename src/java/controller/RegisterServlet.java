@@ -1,3 +1,5 @@
+package controller;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -11,7 +13,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.*;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import dao.registerDao;
+import bean.User;
 /**
  *
  * @author Hp V
@@ -22,7 +27,7 @@ public class RegisterServlet extends HttpServlet {
             throws ServletException, IOException, SQLException {
         response.setContentType("text/html;charset=UTF-8");
         
-        //String fullname = request.getParameter("fullname"); 
+        String fullname = request.getParameter("fullname"); 
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("confirmPassword");
@@ -32,22 +37,37 @@ public class RegisterServlet extends HttpServlet {
             request.getRequestDispatcher("register.jsp").forward(request, response);
             return; 
         }
-        Connection conn = null;
-        PreparedStatement ps = null;
         
-        try{
-            conn = DriverManager.getConnection("","","");
-            String query = "Insert into user (username, password) values (?,?)";
-            ps = conn.prepareStatement(query);
-            ps.setString(1, username);
-            ps.setString(2, password);
-            ps.executeUpdate();
-        }catch(Exception e){
-            e.printStackTrace();
-        }finally{
-            if (ps != null) ps.close();
-            if (conn != null) conn.close();
+         if (fullname == null || fullname.trim().isEmpty()) {
+            request.setAttribute("errorMessage", "Full name is required");
+            request.getRequestDispatcher("register.jsp").forward(request, response);
+            return;
         }
+        
+        if (username == null || username.trim().isEmpty()) {
+            request.setAttribute("errorMessage", "Username is required");
+            request.getRequestDispatcher("register.jsp").forward(request, response);
+            return;
+        }
+        
+        registerDao dao = new registerDao();
+        
+        if (dao.isUsernameExists(username)) {
+            request.setAttribute("errorMessage", "Username already exists");
+            request.getRequestDispatcher("register.jsp").forward(request, response);
+            return;
+        }
+        
+        User user = new User(username, password);
+         boolean isRegistered = dao.registerUser(user);
+            
+            if (isRegistered) {
+                response.sendRedirect("login.jsp?success=true");
+            } else {
+                request.setAttribute("errorMessage", "Registration failed. Please try again.");
+                request.getRequestDispatcher("register.jsp").forward(request, response);
+            }
+        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -62,7 +82,11 @@ public class RegisterServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException ex) {
+            Logger.getLogger(RegisterServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -76,7 +100,11 @@ public class RegisterServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException ex) {
+            Logger.getLogger(RegisterServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
