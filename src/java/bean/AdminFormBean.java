@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Bean;
+package bean;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
  * @author syazw
  */
 public class AdminFormBean implements Serializable{
+    private int id;
     private String name;
     private LocalDateTime time;
     private String description;
@@ -20,11 +21,21 @@ public class AdminFormBean implements Serializable{
         
     }
     
-    public AdminFormBean(String name, LocalDateTime time, String description){
+    public AdminFormBean(int id, String name, LocalDateTime time, String description){
+        this.id = id;
         this.name = name;
         this.time = time;
         this.description = description;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    
 
     public String getName() {
         return name;
@@ -49,5 +60,7 @@ public class AdminFormBean implements Serializable{
     public void setDescription(String description) {
         this.description = description;
     }
+
+    
     
 }
