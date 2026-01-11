@@ -1,38 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
-                             http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
-         version="3.1">
-
+<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee                              http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
     <!-- ApplicationServlet -->
     <servlet>
         <servlet-name>ApplicationServlet</servlet-name>
         <servlet-class>controller.ApplicationServlet</servlet-class>
     </servlet>
-
+    <servlet>
+        <servlet-name>displayEventServlet</servlet-name>
+        <servlet-class>java.controller.displayEventServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>ApplicationServlet</servlet-name>
         <url-pattern>/ApplicationServlet</url-pattern>
     </servlet-mapping>
-
     <!-- RegisterServlet -->
     <servlet>
         <servlet-name>RegisterServlet</servlet-name>
         <servlet-class>controller.RegisterServlet</servlet-class>
     </servlet>
-
     <servlet-mapping>
         <servlet-name>RegisterServlet</servlet-name>
         <url-pattern>/RegisterServlet</url-pattern>
     </servlet-mapping>
-
+    <servlet-mapping>
+        <servlet-name>displayEventServlet</servlet-name>
+        <url-pattern>/displayEventServlet</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
-
     <welcome-file-list>
         <welcome-file>dashboard.html</welcome-file>
     </welcome-file-list>
-
 </web-app>

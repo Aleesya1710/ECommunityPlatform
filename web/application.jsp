@@ -1,4 +1,27 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.List" %>
+<%@ page import="bean.Event" %>
+<%@ page import="dao.ApplicationDao" %>
+
+<%
+    HttpSession userSession = request.getSession(false);
+    Integer userId = null;
+    String userName = null;
+    
+    if (userSession != null) {
+        userId = (Integer) userSession.getAttribute("userId");
+        userName = (String) userSession.getAttribute("userName");
+    }
+    
+    if (userId == null) {
+        response.sendRedirect("login.jsp?error=Please login to view events");
+        return;
+    }
+    
+    ApplicationDao dao = new ApplicationDao();
+    List<Event> events = dao.getAllEvent();
+%>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,10 +31,10 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
 <style>
-    /* Custom CSS Overrides */
+    /* Your existing styles */
     .btn-primary {
         background-color: #F7DE4F;
-        color: #333333; /* Dark text for better readability on yellow */
+        color: #333333;
         transition: all 0.2s ease;
     }
     .btn-primary:hover {
@@ -22,9 +45,8 @@
         transition: color 0.2s ease;
     }
     .nav-link:hover {
-        color: #E2B000; /* Links hover color */
+        color: #E2B000;
     }
-    /* Applying font color to specific elements */
     .text-primary-accent {
         color: #F7DE4F;
     }
@@ -32,7 +54,6 @@
         color: #F4D10B;
     }
 </style>
-
 </head>
 <body class="bg-web-bg font-sans text-text-dark min-h-screen flex flex-col">
 
@@ -72,7 +93,34 @@
 
 <main class="flex-1 max-w-7xl mx-auto pt-8 pb-16 px-4 sm:px-6 lg:px-8">
     <h1 class="text-4xl font-extrabold text-center mb-8">Available Programs</h1>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="programContainer"></div>
+    
+    <!-- Display events from database -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <%
+            if (events != null && !events.isEmpty()) {
+                for (Event event : events) {
+        %>
+            <div class='bg-white p-6 rounded-xl shadow-lg border-t-4 border-primary-accent'>
+                <h3 class="text-xl font-bold mb-2"><%= event.getName() %></h3>
+                <p class="text-gray-600 mb-1"><strong>Description:</strong> <%= event.getDescription() %></p>
+                <p class="text-gray-600 mb-1"><strong>Location:</strong> <%= event.getLocation() %></p>
+                <p class="text-gray-600 mb-3"><strong>Date:</strong> <%= event.getTime() %></p>
+                <button class="btn-primary px-6 py-2 rounded-full mb-2 applyBtn font-bold shadow-md" 
+                        onclick="openForm('<%= event.getName() %>', <%= event.getId() %>)">
+                    Apply
+                </button>
+            </div>
+        <%
+                }
+            } else {
+        %>
+            <div class="col-span-2 text-center text-gray-500">
+                <p>No events available at the moment.</p>
+            </div>
+        <%
+            }
+        %>
+    </div>
 </main>
 
 <footer class="bg-text-dark text-white py-6 mt-auto">
@@ -115,56 +163,33 @@
         }
     }
 
-    // [Mobile menu, Smooth scroll, and URL check logic remains the same]
+    // Mobile menu toggle
     document.getElementById('mobile-menu-button').addEventListener('click', function() {
         const menu = document.getElementById('mobile-menu');
         menu.classList.toggle('hidden');
     });
 
+    // Check if user is logged in
     const urlParams = new URLSearchParams(window.location.search);
     const logged = urlParams.get('logged');
     if (logged) {
         document.getElementById('login').style.display = 'none';
         const welcome = document.createElement('p');
         welcome.className = "font-bold text-primary-accent";
-        welcome.textContent = `Welcome, ${logged}!`;
+        welcome.textContent = 'Welcome, ' + logged + '!';
         document.querySelector('.flex.items-center.space-x-4').prepend(welcome);
     }
 
-    function generateId() { return '_' + Math.random().toString(36).substr(2, 9); }
+    // Open form function
+    function openForm(eventName, eventId) {
+        document.getElementById('floatingForm').classList.remove('hidden');
+        document.getElementById('formTitle').textContent = 'Apply for: ' + eventName;
+        document.getElementById('eventID').value = eventId;
+    }
 
-    const programs = [
-        { id: generateId(), title: 'Community Clean-Up Day', description: 'A major initiative to clear litter and plant new saplings in the local park.', location: 'Taman Perdana', date: '2025-12-10' },
-        { id: generateId(), title: 'Digital Literacy Workshop', description: 'Teaching basic computer and internet skills to senior citizens in the area.', location: 'Community Hall', date: '2025-12-15' }
-    ];
-
-    const container = document.getElementById('programContainer');
-    const floatingForm = document.getElementById('floatingForm');
-    const closeForm = document.getElementById('closeForm');
-    const formTitle = document.getElementById('formTitle');
-
-    programs.forEach(program => {
-        const card = document.createElement('div');
-        card.className = 'bg-white p-6 rounded-xl shadow-lg border-t-4 border-primary-accent';
-        card.innerHTML = `
-            <h3 class="text-xl font-bold mb-2">${program.title}</h3>
-            <p class="text-gray-600 mb-1"><strong>Description:</strong> ${program.description}</p>
-            <p class="text-gray-600 mb-1"><strong>Location:</strong> ${program.location}</p>
-            <p class="text-gray-600 mb-3"><strong>Date:</strong> ${program.date}</p>
-            <button class="btn-primary px-6 py-2 rounded-full mb-2 applyBtn font-bold shadow-md">Apply</button>
-        `;
-        container.appendChild(card);
-
-        const applyBtn = card.querySelector('.applyBtn');
-        applyBtn.addEventListener('click', () => {
-            floatingForm.classList.remove('hidden');
-            formTitle.textContent = `Apply for: ${program.title}`;
-            document.getElementById('eventID').value = program.id;
-        });
-    });
-
-    closeForm.addEventListener('click', () => {
-        floatingForm.classList.add('hidden');
+    // Close form
+    document.getElementById('closeForm').addEventListener('click', function() {
+        document.getElementById('floatingForm').classList.add('hidden');
     });
 </script>
 
