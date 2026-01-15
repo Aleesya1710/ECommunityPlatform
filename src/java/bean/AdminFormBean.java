@@ -1,0 +1,66 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package bean;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
+/**
+ *
+ * @author syazw
+ */
+public class AdminFormBean implements Serializable{
+    private int id;
+    private String name;
+    private LocalDateTime time;
+    private String description;
+    
+    public AdminFormBean(){
+        
+    }
+    
+    public AdminFormBean(int id, String name, LocalDateTime time, String description){
+        this.id = id;
+        this.name = name;
+        this.time = time;
+        this.description = description;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public LocalDateTime getTime() {
+        return time;
+    }
+
+    public void setTime(LocalDateTime time) {
+        this.time = time;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    
+    
+}

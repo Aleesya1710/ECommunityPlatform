@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Program</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #fcf2bb; }
+    </style>
+</head>
+<body class="p-8">
+    <div class="max-w-2xl mx-auto bg-white shadow-xl rounded-xl p-8">
+        <h2 class="text-2xl font-bold mb-6">Edit Program: ${program.title}</h2>
+        
+        <form action="UpdateProgramServlet" method="POST" class="space-y-4">
+            <input type="hidden" name="id" value="${program.id}">
+
+            <div>
+                <label class="block text-sm font-medium">Program Title</label>
+                <input type="text" name="title" value="${program.title}" class="w-full border p-2 rounded" required>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium">Description</label>
+                <textarea name="description" rows="4" class="w-full border p-2 rounded" required>${program.description}</textarea>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium">Date</label>
+                    <input type="date" name="date" value="${program.date}" class="w-full border p-2 rounded" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium">Location</label>
+                    <input type="text" name="location" value="${program.location}" class="w-full border p-2 rounded" required>
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-3 pt-4">
+                <a href="listForm.jsp" class="bg-gray-200 px-4 py-2 rounded">Cancel</a>
+                <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Update Changes</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
