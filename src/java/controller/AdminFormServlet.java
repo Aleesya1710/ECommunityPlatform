@@ -10,58 +10,80 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import bean.AdminFormBean;
+import bean.Event;
 import dao.AdminFormDao;
+import javax.servlet.annotation.WebServlet;
 
 /**
  *
  * @author syazw
  */
-public class AdminFormServlet extends HttpServlet{
+@WebServlet("/AdminFormServlet")
+public class AdminFormServlet extends HttpServlet {
     
-protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-    
-    // 1. Get Parameters
-    String idString = request.getParameter("id"); // Needed for Edit
-    String name = request.getParameter("name");
-    String timeString = request.getParameter("time");
-    String description = request.getParameter("description");
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        try {
+            String eventIdString = request.getParameter("eventId");
+            String title = request.getParameter("title");
+            String dateString = request.getParameter("date");
+            String location = request.getParameter("location");
+            String description = request.getParameter("description");
+            String organizationIdString = request.getParameter("organizationId");
+            
 
-    // 2. Handle Date/Time (Adding a default time if only date is provided)
-    // If the input is just "2026-01-11", LocalDateTime needs "T00:00:00"
-    java.time.LocalDateTime time = java.time.LocalDateTime.parse(timeString + "T00:00:00");
-
-    // 3. Populate the Bean
-    AdminFormBean adminFormBean = new AdminFormBean();
-    adminFormBean.setName(name);
-    adminFormBean.setTime(time);
-    adminFormBean.setDescription(description);
-    
-    if(idString != null && !idString.isEmpty()) {
-        adminFormBean.setId(Integer.parseInt(idString));
+            if (title == null || title.trim().isEmpty() ||
+                dateString == null || dateString.trim().isEmpty() ||
+                location == null || location.trim().isEmpty() ||
+                description == null || description.trim().isEmpty() ||
+                organizationIdString == null || organizationIdString.trim().isEmpty()) {
+                
+                request.setAttribute("errMessage", "All fields are required!");
+                request.getRequestDispatcher("/adminForm.jsp").forward(request, response);
+                return;
+            }
+            
+            java.time.LocalDateTime time = java.time.LocalDateTime.parse(dateString);
+            int organizationId = Integer.parseInt(organizationIdString);
+            
+            Event eventBean = new Event();
+            eventBean.setName(title);
+            eventBean.setTime(time);
+            eventBean.setLocation(location);
+            eventBean.setDescription(description);
+            
+            if (eventIdString != null && !eventIdString.isEmpty()) {
+                eventBean.setId(Integer.parseInt(eventIdString));
+            }
+            
+            AdminFormDao adminFormDao = new AdminFormDao();
+            String result;
+            
+ 
+            if (eventIdString == null || eventIdString.isEmpty()) {
+                result = adminFormDao.addEvent(eventBean, organizationId);
+            } else {
+                result = adminFormDao.updateEvent(eventBean, organizationId);
+            }
+            
+            // 6. Navigation based on result
+            if ("SUCCESS".equals(result)) {
+                response.sendRedirect("listForm.jsp?success=true");
+            } else {
+                request.setAttribute("errMessage", "Operation failed: " + result);
+                request.getRequestDispatcher("/adminForm.jsp").forward(request, response);
+            }
+            
+        } catch (NumberFormatException e) {
+            request.setAttribute("errMessage", "Invalid number format: " + e.getMessage());
+            request.getRequestDispatcher("/adminForm.jsp").forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("errMessage", "Error: " + e.getMessage());
+            request.getRequestDispatcher("/adminForm.jsp").forward(request, response);
+        }
     }
-
-    // 4. Call DAO (Pass the BEAN, not the DAO)
-    AdminFormDao adminFormDao = new AdminFormDao();
-    String result;
-    
-    // Logic to differentiate: If ID exists, it's an UPDATE. Otherwise, it's an INSERT.
-    if (idString == null || idString.isEmpty()) {
-        result = adminFormDao.addProgram(adminFormBean); 
-    } else {
-        result = adminFormDao.updateProgram(adminFormBean);
-    }
-
-    // 5. Navigation
-    if ("SUCCESS".equals(result)) {
-        request.setAttribute("Name", name); 
-        request.getRequestDispatcher("/listForm.jsp").forward(request, response);
-    } else {
-        request.setAttribute("errMessage", "Database operation failed: " + result); 
-        request.getRequestDispatcher("/adminForm.html").forward(request, response);
-    }
-}
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

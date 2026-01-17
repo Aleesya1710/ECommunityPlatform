@@ -12,7 +12,7 @@ package bean;
 public class User {
     private String username;
     private String password;
-    
+    private int id;
     public User(){
         
     }
@@ -24,6 +24,8 @@ public class User {
     
     public String getUsername(){return username;}
     public String getPassword(){return password;}
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
     public void setUsername(String name){username = name;}
     public void setPassword(String pass){password = pass;}
 }

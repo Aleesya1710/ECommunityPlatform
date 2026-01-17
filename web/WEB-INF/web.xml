@@ -9,6 +9,22 @@
         <servlet-name>displayEventServlet</servlet-name>
         <servlet-class>java.controller.displayEventServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>deleteEventServlet</servlet-name>
+        <servlet-class>controller.deleteEventServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EditEventServlet</servlet-name>
+        <servlet-class>controller.EditEventServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>manageOrgnazitionServlet</servlet-name>
+        <servlet-class>controller.manageOrgnazitionServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ManageOrgServlet</servlet-name>
+        <servlet-class>controller.ManageOrgServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>ApplicationServlet</servlet-name>
         <url-pattern>/ApplicationServlet</url-pattern>
@@ -25,6 +41,22 @@
     <servlet-mapping>
         <servlet-name>displayEventServlet</servlet-name>
         <url-pattern>/displayEventServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>deleteEventServlet</servlet-name>
+        <url-pattern>/deleteEventServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditEventServlet</servlet-name>
+        <url-pattern>/EditEventServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>manageOrgnazitionServlet</servlet-name>
+        <url-pattern>/manageOrgnazitionServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ManageOrgServlet</servlet-name>
+        <url-pattern>/ManageOrgServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>

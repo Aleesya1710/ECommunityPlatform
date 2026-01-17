@@ -1,25 +1,16 @@
+<%@page import="java.time.format.DateTimeFormatter"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
 <%@ page import="bean.Event" %>
 <%@ page import="dao.ApplicationDao" %>
 
 <%
-    HttpSession userSession = request.getSession(false);
-    Integer userId = null;
-    String userName = null;
-    
-    if (userSession != null) {
-        userId = (Integer) userSession.getAttribute("userId");
-        userName = (String) userSession.getAttribute("userName");
-    }
-    
-    if (userId == null) {
-        response.sendRedirect("login.jsp?error=Please login to view events");
-        return;
-    }
-    
     ApplicationDao dao = new ApplicationDao();
     List<Event> events = dao.getAllEvent();
+
+
+DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+DateTimeFormatter timeFormatter12 = DateTimeFormatter.ofPattern("h:mm a");
 %>
 
 <!DOCTYPE html>
@@ -57,44 +48,10 @@
 </head>
 <body class="bg-web-bg font-sans text-text-dark min-h-screen flex flex-col">
 
-<header class="shadow-md bg-white sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-20">
-            <div class="flex-shrink-0">
-                <span class="text-2xl font-extrabold tracking-tight text-text-dark">
-                    E-Community <span class="text-primary-accent">Platform</span>
-                </span>
-            </div>
-            <nav class="hidden md:flex space-x-8">
-                <a href="dashboard.html#homes" class="nav-link font-semibold py-2 rounded-lg transition duration-150 ease-in-out">HOME</a>
-                <a href="application.jsp" class="nav-link font-semibold py-2 rounded-lg transition duration-150 ease-in-out">SERVICES</a>
-                <a href="dashboard.html#donations" class="nav-link font-semibold py-2 rounded-lg transition duration-150 ease-in-out">DONATIONS</a>
-            </nav>
-            <div class="flex items-center space-x-4">
-                <a id="login" href="login.jsp" class="btn-primary px-5 py-2 text-sm font-bold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition duration-300 ease-in-out uppercase">
-                    LOGIN
-                </a>
-                <button id="mobile-menu-button" class="md:hidden text-text-dark focus:outline-none">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </div>
-    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100">
-        <div class="pt-2 pb-3 space-y-1 sm:px-3">
-            <a href="dashboard.html" class="nav-link block px-3 py-2 text-base font-medium">HOME</a>
-            <a href="application.jsp" class="nav-link block px-3 py-2 text-base font-medium">SERVICES</a>
-            <a href="dashboard.html" class="nav-link block px-3 py-2 text-base font-medium">DONATIONS</a>
-        </div>
-    </div>
-</header>
+<%@ include file="header.jsp" %>
 
 <main class="flex-1 max-w-7xl mx-auto pt-8 pb-16 px-4 sm:px-6 lg:px-8">
     <h1 class="text-4xl font-extrabold text-center mb-8">Available Programs</h1>
-    
-    <!-- Display events from database -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <%
             if (events != null && !events.isEmpty()) {
@@ -104,7 +61,8 @@
                 <h3 class="text-xl font-bold mb-2"><%= event.getName() %></h3>
                 <p class="text-gray-600 mb-1"><strong>Description:</strong> <%= event.getDescription() %></p>
                 <p class="text-gray-600 mb-1"><strong>Location:</strong> <%= event.getLocation() %></p>
-                <p class="text-gray-600 mb-3"><strong>Date:</strong> <%= event.getTime() %></p>
+                <p class="text-gray-600 mb-3"><strong>Date:</strong> <%= event.getTime().format(dateFormatter)  %></p>
+                <p class="text-gray-600 mb-3"><strong>Time:</strong> <%= event.getTime().format(timeFormatter12)  %></p>
                 <button class="btn-primary px-6 py-2 rounded-full mb-2 applyBtn font-bold shadow-md" 
                         onclick="openForm('<%= event.getName() %>', <%= event.getId() %>)">
                     Apply

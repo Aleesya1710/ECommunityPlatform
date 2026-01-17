@@ -1,8 +1,29 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%-- Add this tag library at the top to enable loops --%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.List" %>
+<%@ page import="bean.Event" %>
+<%@ page import="dao.ApplicationDao" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html lang="en">
+<%
+    HttpSession userSession = request.getSession(false);
+    Integer userId = null;
+    String userName = null;
+    if (userSession != null) {
+        userId = (Integer) userSession.getAttribute("userId");
+        userName = (String) userSession.getAttribute("username");
+    }
+    if (userId == null) {
+        response.sendRedirect("login.jsp?error=Please login to view events");
+        return;
+    }
+    
+
+    ApplicationDao dao = new ApplicationDao();
+    List<Event> events = dao.getAllEvent();
+    request.setAttribute("events", events);
+%>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,60 +38,74 @@
         .btn-custom:hover { background-color: #F4D10B; }
     </style>
 </head>
-<body class="min-h-screen p-4 md:p-8">
-
-    <div id="app" class="max-w-4xl mx-auto bg-white shadow-xl rounded-xl p-6 md:p-8">
-        <header class="mb-8">
-            <h1 class="text-4xl font-extrabold text-gray-900">Program Management Dashboard</h1>
-            <p class="text-gray-500">Manage volunteer opportunities efficiently.</p>
-        </header>
-
-        <div id="listView" class="view">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-semibold text-gray-800">Available Programs</h2>
-                <a href="adminForm.html" class="btn-custom py-2 px-4 rounded-lg shadow-md flex items-center">
-                   + Create New Program
-                </a>
+<body class="min-h-screen items-center">
+       <header class="bg-white shadow-md">
+        <div class="max-w-full mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center">
+            <h1 class="text-3xl font-extrabold text-gray-900 mb-2 md:mb-0">Staff Dashboard</h1>
+            <div class="flex items-center gap-4">
+                <span class="font-semibold text-gray-800">Welcome, <%= userName %></span>
+                <a href="LogoutServlet" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow">Logout</a>
             </div>
+        </div>
+    </header>
+<a href="staffDashboard.jsp" 
+   class="btn-custom fixed top-24 left-8 px-4 py-3 rounded-full shadow-lg z-40 flex items-center gap-2">
+    &#8592; Dashboard
+</a>
+<div id="app" class="max-w-4xl mx-auto bg-white shadow-xl rounded-xl mt-10 p-6 md:p-8">
+    <header class="mb-8">
+        <h1 class="text-4xl font-extrabold text-gray-900">Program Management Dashboard</h1>
+        <p class="text-gray-500">Manage volunteer opportunities efficiently.</p>
+    </header>
 
-            <div id="programList" class="space-y-4 custom-scroll max-h-96 overflow-y-auto pr-2">
-                <c:forEach var="program" items="${programList}">
-                    <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition">
-                        <h3 class="text-xl font-bold text-gray-800">${program.title}</h3>
-                        <p class="text-sm text-gray-500 mb-2">${program.location} | ${program.date}</p>
-                        <p class="text-gray-600 mb-4">${program.description}</p>
+    <div id="listView" class="view">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-semibold text-gray-800">Available Programs</h2>
+            <a href="adminForm.jsp" class="btn-custom py-2 px-4 rounded-lg shadow-md flex items-center">
+               + Create New Program
+            </a>
+        </div>
+
+        <div id="programList" class="space-y-4 custom-scroll max-h-96 overflow-y-auto pr-2">
+            <c:forEach var="program" items="${events}">
+                <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition">
+                    <h3 class="text-xl font-bold text-gray-800">${program.name}</h3>
+                    
+                    <p class="text-sm text-gray-500 mb-2">
+                        ${program.location} | Date: ${program.formattedDate} <br>
+                        Time: ${program.formattedTime12}
+                    </p>
+                    
+                    <p class="text-gray-600 mb-4">${program.description}</p>
+
+                    <div class="flex space-x-3">
+                        <a href="EditEventServlet?id=${program.id}" class="text-blue-600 font-semibold hover:underline">Edit</a>
                         
-                        <div class="flex space-x-3">
-                            <a href="editAdminForm.jsp?id=${program.id}" class="text-blue-600 font-semibold hover:underline">Edit</a>
-                            
-                            <button onclick="showDeleteConfirm('${program.id}', '${program.title}')" class="text-red-600 font-semibold hover:underline">
-                                Delete
-                            </button>
-                        </div>
+                        <button onclick="showDeleteConfirm('${program.id}', '${program.name}')" class="text-red-600 font-semibold hover:underline">
+                            Delete
+                        </button>
                     </div>
-                </c:forEach>
-                
-                <%-- Show this if the database list is empty --%>
-                <c:if test="${empty programList}">
-                    <p class="text-center text-gray-400 p-4">No programs found in the database.</p>
-                </c:if>
-            </div>
-        </div>
-    </div>
+                </div>
+            </c:forEach>
 
-    <div id="deleteModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-lg shadow-2xl w-full max-w-sm p-6">
-            <h3 class="text-xl font-semibold text-red-600 mb-4">Confirm Deletion</h3>
-            <p class="text-gray-700 mb-6">Are you sure you want to delete <strong id="programToDeleteTitle"></strong>?</p>
-            <div class="flex justify-end space-x-3">
-                <button onclick="hideDeleteConfirm()" class="px-4 py-2 bg-gray-200 rounded-lg">Cancel</button>
-                <button onclick="confirmDelete()" class="px-4 py-2 bg-red-600 text-white rounded-lg">Yes, Delete</button>
-            </div>
+            <c:if test="${empty events}">
+                <p class="text-center text-gray-400 p-4">No programs found in the database.</p>
+            </c:if>
         </div>
     </div>
+</div>
+<div id="deleteModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-lg shadow-2xl w-full max-w-sm p-6">
+        <h3 class="text-xl font-semibold text-red-600 mb-4">Confirm Deletion</h3>
+        <p class="text-gray-700 mb-6">Are you sure you want to delete <strong id="programToDeleteTitle"></strong>?</p>
+        <div class="flex justify-end space-x-3">
+            <button onclick="hideDeleteConfirm()" class="px-4 py-2 bg-gray-200 rounded-lg">Cancel</button>
+            <button onclick="confirmDelete()" class="px-4 py-2 bg-red-600 text-white rounded-lg">Yes, Delete</button>
+        </div>
+    </div>
+</div>
 
 <script>
-    // We only keep scripts for UI interactions (Modals)
     function showDeleteConfirm(id, title) {
         document.getElementById('programToDeleteTitle').textContent = title;
         document.getElementById('deleteModal').classList.remove('hidden');
@@ -82,8 +117,7 @@
     }
 
     function confirmDelete() {
-        // Redirect to a Servlet that handles SQL DELETE
-        window.location.href = 'DeleteProgramServlet?id=' + window.currentDeleteId;
+        window.location.href = 'DeleteEventServlet?id=' + window.currentDeleteId;
     }
 </script>
 </body>

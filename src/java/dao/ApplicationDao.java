@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.util.List;
 import util.DBConnection;
 import bean.Event;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class ApplicationDao {
@@ -56,7 +57,7 @@ public class ApplicationDao {
                  Event event = new Event();
                  int id = rs.getInt("EventID");
                  String name = rs.getString("name");
-                 String time = rs.getString("time");
+                 LocalDateTime time = rs.getTimestamp("time").toLocalDateTime();
                  String location = rs.getString("location");
                  String description = rs.getString("description");
                  event.setId(id);
@@ -74,4 +75,26 @@ public class ApplicationDao {
 
         return eventList; 
     }
+   public int getTotalEvent() {
+
+    int total = 0;
+    String sql = "SELECT COUNT(eventid) AS total FROM event";
+
+    try (Connection con = DBConnection.createConnection();
+         PreparedStatement ps = con.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+
+        System.out.println("Connection: " + (con != null ? "SUCCESS" : "FAILED"));
+
+        if (rs.next()) {
+            total = rs.getInt("total"); // or rs.getInt(1)
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return total;
+}
+
 }

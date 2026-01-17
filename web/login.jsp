@@ -77,31 +77,18 @@
     </style>
 </head>
 <body>
-    <%
-    String username = request.getParameter("username");
-    String password = request.getParameter("password");
-
-    if (username != null && password != null) {
-
-        if (username.equals("admin") && password.equals("123")) {
-            response.sendRedirect("crud.html?logged=admin");
-            return;
-        } else if (username.equals("user") && password.equals("123")) {
-            response.sendRedirect("dashboard.html?logged=user");
-            return;
-        } else {
-            request.setAttribute("error", "Invalid login");
-        }
-    }
-%>
-
     <div class="login-container">
         <h1>E-Community Login</h1>
-        <form>
-            <input type="text" name="username" placeholder="Username" required>
+        <c:if test="${not empty errMessage}">
+            <div class="error">${errMessage}</div>
+        </c:if>
+        <form action="LoginServlet" method="post">
+            <input type="text" name="username" placeholder="Username" required 
+                   value="${param.username != null ? param.username : ''}">
             <input type="password" name="password" placeholder="Password" required>
             <button type="submit">LOGIN</button>
         </form>
+
         <p>Don't have an account? <a href="register.jsp">Sign Up</a></p>
     </div>
 </body>
