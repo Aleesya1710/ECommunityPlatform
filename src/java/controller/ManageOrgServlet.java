@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import bean.Organization;
 import dao.OrganizationDao;
+import java.net.URLEncoder;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 /**
@@ -35,12 +36,9 @@ public class ManageOrgServlet extends HttpServlet {
             throws ServletException, IOException {
         
         OrganizationDao orgDao = new OrganizationDao();
-
-        // Check if this is an add or edit request
         String action = request.getParameter("action");
 
         if("add".equalsIgnoreCase(action)) {
-            // --- ADD ---
             String name = request.getParameter("organizationName");
             String email = request.getParameter("organizationEmail");
 
@@ -50,11 +48,15 @@ public class ManageOrgServlet extends HttpServlet {
                 org.setOrganizationEmail(email);
 
                 boolean added = orgDao.addOrganization(org);
-                request.setAttribute("message", added ? "Organization added successfully" : "Failed to add organization");
+                if (added) {
+                response.sendRedirect("manageOrganizations.jsp?added=true");
+                } else {
+                    response.sendRedirect("manageOrganizations.jsp?error=true&message=" + URLEncoder.encode("Failed to add organization", "UTF-8"));
+                }
+                return;
             }
 
         } else if("edit".equalsIgnoreCase(action)) {
-            // --- EDIT ---
             String idStr = request.getParameter("organizationId");
             String name = request.getParameter("organizationName");
             String email = request.getParameter("organizationEmail");
@@ -67,15 +69,33 @@ public class ManageOrgServlet extends HttpServlet {
                 org.setOrganizationEmail(email);
 
                 boolean updated = orgDao.updateOrganization(org);
-                request.setAttribute("message", updated ? "Organization updated successfully" : "Failed to update organization");
+               
+                 if (updated) {
+                    response.sendRedirect("manageOrganizations.jsp?updated=true");
+                } else {
+                    response.sendRedirect("manageOrganizations.jsp?error=true&message=" + URLEncoder.encode("Failed to update organization", "UTF-8"));
+                }
+                return;
             }
         }
+        else if("delete".equals(action)){
+            String idStr = request.getParameter("organizationId");
+            if(idStr != null){
+                int id = Integer.parseInt(idStr);
+               
+                boolean delete = orgDao.deleteOrganization(id);
+                if(delete)
+                    response.sendRedirect("manageOrganizations.jsp?deleted=true");
+                else {
+                    response.sendRedirect("manageOrganizations.jsp?error=true&message=" + URLEncoder.encode("Failed to update organization", "UTF-8"));
+                }
+            }
+               return; 
+        }
 
-        // Fetch all organizations to display
         List<Organization> organizationList = orgDao.getAllOrganizations();
         request.setAttribute("organizations", organizationList);
 
-        // Forward to JSP
         request.getRequestDispatcher("manageOrganizations.jsp").forward(request, response);
     }
     
@@ -119,4 +139,4 @@ public class ManageOrgServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-}
+}      

@@ -22,7 +22,7 @@ public class DeleteEventServlet extends HttpServlet {
         String result = dao.deleteEvent(eventId);
 
         if ("SUCCESS".equals(result)) {
-            response.sendRedirect("listForm.jsp?msg=deleted");
+            response.sendRedirect("listForm.jsp?deleted=true");
         } else if ("NO_RECORD_FOUND".equals(result)) {
             response.sendRedirect("listForm.jsp?error=No record found");
         } else {

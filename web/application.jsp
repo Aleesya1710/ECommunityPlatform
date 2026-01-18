@@ -49,6 +49,7 @@ DateTimeFormatter timeFormatter12 = DateTimeFormatter.ofPattern("h:mm a");
 <body class="bg-web-bg font-sans text-text-dark min-h-screen flex flex-col">
 
 <%@ include file="header.jsp" %>
+<%@ include file="popupNotification.jsp" %>  
 
 <main class="flex-1 max-w-7xl mx-auto pt-8 pb-16 px-4 sm:px-6 lg:px-8">
     <h1 class="text-4xl font-extrabold text-center mb-8">Available Programs</h1>

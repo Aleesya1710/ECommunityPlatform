@@ -27,7 +27,7 @@
         }
     </style>
 </head>
-<body class="min-h-screen p-4 md:p-8">
+<body class="min-h-screen">
     
     <%
         OrganizationDao orgDao = new OrganizationDao();
@@ -44,27 +44,20 @@
 
         }
         
-        String errMessage = (String) request.getAttribute("errMessage");
+   
     %>
-    
-    <div class="max-w-2xl mx-auto bg-white shadow-xl rounded-xl p-6 md:p-8">
-    
-        <header class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">
-                <%= (eventId != null && !eventId.isEmpty()) ? "Edit" : "Create" %> Volunteer Event
-            </h1>
-            <p class="text-gray-500 text-sm">Fill in the details below to publish a new opportunity.</p>
-        </header>
+
+    <jsp:include page="header.jsp">
+        <jsp:param name="pageTitle" value="Staff Dashboard - E-Community Platform" />
+    </jsp:include>
+    <%@ include file="popupNotification.jsp" %>  
+
+    <div class="max-w-2xl mx-auto bg-white shadow-xl rounded-xl mt-20 p-6 md:p-8">
+ 
 <a href="listForm.jsp" 
-   class="btn-custom fixed top-10 left-8 px-4 py-3 rounded-full shadow-lg z-40 flex items-center gap-2">
+   class="btn-custom fixed top-24 left-8 px-4 py-3 rounded-full shadow-lg z-40 flex items-center gap-2">
     &#8592; Back
 </a>
-        <% if (errMessage != null && !errMessage.isEmpty()) { %>
-            <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-                <%= errMessage %>
-            </div>
-        <% } %>
-
         <form id="programForm" action="AdminFormServlet" method="post" class="space-y-5">
             <input type="hidden" id="eventId" name="eventId" value="<%= eventId != null ? eventId : "" %>">
             <div>

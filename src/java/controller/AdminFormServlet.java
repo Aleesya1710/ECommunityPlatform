@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import bean.Event;
 import dao.AdminFormDao;
+import java.net.URLEncoder;
 import javax.servlet.annotation.WebServlet;
 
 /**
@@ -66,18 +67,18 @@ public class AdminFormServlet extends HttpServlet {
             } else {
                 result = adminFormDao.updateEvent(eventBean, organizationId);
             }
-            
-            // 6. Navigation based on result
+
             if ("SUCCESS".equals(result)) {
-                response.sendRedirect("listForm.jsp?success=true");
+                if (eventIdString == null || eventIdString.isEmpty()) {
+                    response.sendRedirect("listForm.jsp?created=true");
+                } else {
+                    response.sendRedirect("listForm.jsp?updated=true");
+                }
             } else {
-                request.setAttribute("errMessage", "Operation failed: " + result);
-                request.getRequestDispatcher("/adminForm.jsp").forward(request, response);
+                String errorMsg = URLEncoder.encode("Operation failed: " + result, "UTF-8");
+                response.sendRedirect("adminForm.jsp?error=true&message=" + errorMsg);
             }
             
-        } catch (NumberFormatException e) {
-            request.setAttribute("errMessage", "Invalid number format: " + e.getMessage());
-            request.getRequestDispatcher("/adminForm.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("errMessage", "Error: " + e.getMessage());
@@ -124,5 +125,3 @@ public class AdminFormServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
     }
-    
-

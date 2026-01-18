@@ -38,20 +38,17 @@
         .btn-custom:hover { background-color: #F4D10B; }
     </style>
 </head>
+<%@ include file="popupNotification.jsp" %>  
 <body class="min-h-screen items-center">
-       <header class="bg-white shadow-md">
-        <div class="max-w-full mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center">
-            <h1 class="text-3xl font-extrabold text-gray-900 mb-2 md:mb-0">Staff Dashboard</h1>
-            <div class="flex items-center gap-4">
-                <span class="font-semibold text-gray-800">Welcome, <%= userName %></span>
-                <a href="LogoutServlet" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow">Logout</a>
-            </div>
-        </div>
-    </header>
+<jsp:include page="header.jsp">
+    <jsp:param name="pageTitle" value="Staff Dashboard - E-Community Platform" />
+</jsp:include>
+
 <a href="staffDashboard.jsp" 
    class="btn-custom fixed top-24 left-8 px-4 py-3 rounded-full shadow-lg z-40 flex items-center gap-2">
     &#8592; Dashboard
 </a>
+                
 <div id="app" class="max-w-4xl mx-auto bg-white shadow-xl rounded-xl mt-10 p-6 md:p-8">
     <header class="mb-8">
         <h1 class="text-4xl font-extrabold text-gray-900">Program Management Dashboard</h1>

@@ -31,9 +31,9 @@ public class ApplicationServlet extends HttpServlet {
         );
 
         if (success) {
-            response.sendRedirect("application.jsp?status=success");
+            response.sendRedirect("application.jsp?registered=true");
         } else {
-            response.sendRedirect("application.jsp?status=error");
+            response.sendRedirect("application.jsp?error=true");
         }
     }
 }

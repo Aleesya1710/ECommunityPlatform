@@ -37,18 +37,12 @@
     .btn-custom:hover { background-color: #F4D10B; }
 </style>
 </head>
+    <jsp:include page="header.jsp">
+        <jsp:param name="pageTitle" value="Staff Dashboard - E-Community Platform" />
+    </jsp:include>
+    <%@ include file="popupNotification.jsp" %>  
 <body class="min-h-screen">
 
-<!-- HEADER -->
-<header class="bg-white shadow-md">
-    <div class="max-w-full mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center">
-        <h1 class="text-3xl font-extrabold text-gray-900 mb-2 md:mb-0">Staff Dashboard</h1>
-        <div class="flex items-center gap-4">
-            <span class="font-semibold text-gray-800">Welcome, <%= userName %></span>
-            <a href="LogoutServlet" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow">Logout</a>
-        </div>
-    </div>
-</header>
 <a href="staffDashboard.jsp" 
    class="btn-custom fixed top-24 left-8 px-4 py-3 rounded-full shadow-lg z-40 flex items-center gap-2">
     &#8592; Dashboard
@@ -77,9 +71,9 @@
                         <button onclick="showEditModal('${org.organizationId}', '${org.organizationName}', '${org.organizationEmail}')" class="text-blue-600 font-semibold hover:underline">
                             Edit
                         </button>
-                        <button onclick="showDeleteModal('${org.organizationId}', '${org.organizationName}')" class="text-red-600 font-semibold hover:underline">
-                            Delete
-                        </button>
+    <a href="javascript:void(0);" 
+       onclick="showDeleteModal(${org.organizationId}, '${org.organizationName}')"
+       class="text-red-500 font-semibold">Delete</a>
                     </div>
                 </div>
             </c:forEach>
@@ -139,11 +133,10 @@
 </div>
 
 <script>
-    // Add Modal
     function showAddModal() { document.getElementById('addModal').classList.remove('hidden'); }
     function hideAddModal() { document.getElementById('addModal').classList.add('hidden'); }
 
-    // Edit Modal
+
     function showEditModal(id, name, email) {
         document.getElementById('editOrgId').value = id;
         document.getElementById('editOrgName').value = name;
@@ -152,15 +145,24 @@
     }
     function hideEditModal() { document.getElementById('editModal').classList.add('hidden'); }
 
-    // Delete Modal
     let currentDeleteId = null;
-    function showDeleteModal(id, name) {
-        currentDeleteId = id;
-        document.getElementById('deleteOrgName').textContent = name;
-        document.getElementById('deleteModal').classList.remove('hidden');
+
+    function showDeleteModal(orgId, orgName) {
+        currentDeleteId = orgId;
+        document.getElementById("deleteOrgName").textContent = orgName;
+        document.getElementById("deleteModal").classList.remove("hidden");
     }
-    function hideDeleteModal() { document.getElementById('deleteModal').classList.add('hidden'); }
-    function confirmDelete() { window.location.href = 'deleteOrganization?id=' + currentDeleteId; }
+
+    function hideDeleteModal() {
+        document.getElementById("deleteModal").classList.add("hidden");
+        currentDeleteId = null;
+    }
+
+    function confirmDelete() {
+        if (currentDeleteId) {
+            window.location.href = 'manageOrganizations?action=delete&organizationId=' + currentDeleteId;
+        }
+    }
 </script>
 
 </body>

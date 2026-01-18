@@ -7,8 +7,11 @@ import java.sql.ResultSet;
 import java.util.List;
 import util.DBConnection;
 import bean.Event;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ApplicationDao {
 
@@ -96,5 +99,87 @@ public class ApplicationDao {
 
     return total;
 }
+      public Map<String, Integer> getVolunteerCountPerEvent() {
+        Map<String, Integer> eventStats = new HashMap<>();
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        
+        try {
+            con = DBConnection.createConnection();
+            
+            // Query to count volunteers per event
+            String query = "SELECT e.name AS eventName, COUNT(r.registrationid) AS volunteerCount " +
+                          "FROM event e " +
+                          "LEFT JOIN registration r ON e.eventid = r.eventid " +
+                          "GROUP BY e.eventid, e.name " +
+                          "ORDER BY volunteerCount DESC";
+            
+            ps = con.prepareStatement(query);
+            rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                String eventName = rs.getString("eventName");
+                int volunteerCount = rs.getInt("volunteerCount");
+                eventStats.put(eventName, volunteerCount);
+            }
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try { if(rs != null) rs.close(); } catch(Exception e) {}
+            try { if(ps != null) ps.close(); } catch(Exception e) {}
+            try { if(con != null) con.close(); } catch(Exception e) {}
+        }
+        
+        return eventStats;
+    }
+    
+    /**
+     * Get detailed event statistics
+     * Returns array of objects for easier JSON conversion
+     */
+    public String getEventStatisticsJSON() {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        StringBuilder json = new StringBuilder("[");
+        
+        try {
+            con = DBConnection.createConnection();
+            
+            String query = "SELECT e.name AS eventName, COUNT(r.registrationid) AS volunteerCount " +
+                          "FROM event e " +
+                          "LEFT JOIN registration r ON e.eventid = r.eventid " +
+                          "GROUP BY e.eventid, e.name " +
+                          "ORDER BY e.name";
+            
+            ps = con.prepareStatement(query);
+            rs = ps.executeQuery();
+            
+            boolean first = true;
+            while (rs.next()) {
+                if (!first) json.append(",");
+                
+                json.append("{");
+                json.append("\"eventName\":\"").append(rs.getString("eventName").replace("\"", "\\\"")).append("\",");
+                json.append("\"volunteerCount\":").append(rs.getInt("volunteerCount"));
+                json.append("}");
+                
+                first = false;
+            }
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "[]"; // Return empty array on error
+        } finally {
+            try { if(rs != null) rs.close(); } catch(Exception e) {}
+            try { if(ps != null) ps.close(); } catch(Exception e) {}
+            try { if(con != null) con.close(); } catch(Exception e) {}
+        }
+        
+        json.append("]");
+        return json.toString();
+    }
 
 }

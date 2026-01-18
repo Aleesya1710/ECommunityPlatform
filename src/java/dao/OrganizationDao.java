@@ -138,5 +138,17 @@ public class OrganizationDao {
         return false;
     }
 }
+    public boolean deleteOrganization(int organizationId) {
+    String sql = "DELETE FROM organization WHERE organizationid = ?";
+    try (Connection con = DBConnection.createConnection();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setInt(1, organizationId);
+        int rows = ps.executeUpdate();
+        return rows > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
+    }
+}
 
 }
