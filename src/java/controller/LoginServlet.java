@@ -35,7 +35,7 @@ public class LoginServlet extends HttpServlet {
                 response.sendRedirect("staffDashboard.jsp");
             } else {
                 session.setAttribute("role", "user");
-                response.sendRedirect("dashboard.html");
+                response.sendRedirect("dashboard.jsp");
             }
 
         } else {

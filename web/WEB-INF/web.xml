@@ -59,17 +59,17 @@
         <url-pattern>/ManageOrgServlet</url-pattern>
     </servlet-mapping>
     <servlet>
-    <servlet-name>EventRegistrationServlet</servlet-name>
-    <servlet-class>controller.eventRegistrationServlet</servlet-class>
-</servlet>
-<servlet-mapping>
-    <servlet-name>EventRegistrationServlet</servlet-name>
-    <url-pattern>/EventRegistrationServlet</url-pattern>
-</servlet-mapping>
+        <servlet-name>EventRegistrationServlet</servlet-name>
+        <servlet-class>controller.eventRegistrationServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EventRegistrationServlet</servlet-name>
+        <url-pattern>/EventRegistrationServlet</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>dashboard.html</welcome-file>
+        <welcome-file>dashboard.jsp</welcome-file>
     </welcome-file-list>
 </web-app>

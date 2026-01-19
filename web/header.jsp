@@ -51,7 +51,7 @@
             </div>
        <%     if(!role.equals("staff")){ %>
             <nav class="hidden md:flex space-x-8">
-                <a href="dashboard.html#homes" class="nav-link font-semibold py-2 rounded-lg transition duration-150 ease-in-out">HOME</a>
+                <a href="dashboard.jsp" class="nav-link font-semibold py-2 rounded-lg transition duration-150 ease-in-out">HOME</a>
                 <a href="application.jsp" class="nav-link font-semibold py-2 rounded-lg transition duration-150 ease-in-out">SERVICES</a>
                 <a href="donation.jsp" class="nav-link font-semibold py-2 rounded-lg transition duration-150 ease-in-out">DONATIONS</a>
             </nav>
@@ -79,7 +79,7 @@
     <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100">
         <%if(!role.equals("staff")){ %>
         <div class="pt-2 pb-3 space-y-1 px-3">
-            <a href="dashboard.html" class="nav-link block px-3 py-2 text-base font-medium">HOME</a>
+            <a href="dashboard.jsp" class="nav-link block px-3 py-2 text-base font-medium">HOME</a>
             <a href="application.jsp" class="nav-link block px-3 py-2 text-base font-medium">SERVICES</a>
             <a href="donation.jsp" class="nav-link block px-3 py-2 text-base font-medium">DONATIONS</a>
             <% } %>
