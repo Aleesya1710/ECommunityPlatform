@@ -12,11 +12,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import bean.User;
 
 public class ApplicationDao {
 
-    public boolean insertRegistration(String name, String phoneNum,
-                                      String ICnum, Integer userID, int eventID) {
+    public boolean insertRegistration(String name, String phoneNum, String ICnum, Integer userID, int eventID) {
 
         boolean result = false;
 
@@ -26,7 +26,6 @@ public class ApplicationDao {
 
         try (Connection con = DBConnection.createConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-
             ps.setString(1, name);
             ps.setString(2, phoneNum);
             ps.setString(3, ICnum);
@@ -50,11 +49,10 @@ public class ApplicationDao {
     
     public List<Event> getAllEvent(){
         List<Event> eventList = new ArrayList<>();     
-        String sql = "Select * from event";
+        String sql = "Select * from event order by time";
         
         try (Connection con = DBConnection.createConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-           System.out.println("Connection: " + (con != null ? "SUCCESS" : "FAILED"));
              ResultSet rs = ps.executeQuery();
              while(rs.next()){
                  Event event = new Event();
@@ -107,8 +105,6 @@ public class ApplicationDao {
         
         try {
             con = DBConnection.createConnection();
-            
-            // Query to count volunteers per event
             String query = "SELECT e.name AS eventName, COUNT(r.registrationid) AS volunteerCount " +
                           "FROM event e " +
                           "LEFT JOIN registration r ON e.eventid = r.eventid " +
@@ -134,11 +130,7 @@ public class ApplicationDao {
         
         return eventStats;
     }
-    
-    /**
-     * Get detailed event statistics
-     * Returns array of objects for easier JSON conversion
-     */
+   
     public String getEventStatisticsJSON() {
         Connection con = null;
         PreparedStatement ps = null;
@@ -181,5 +173,58 @@ public class ApplicationDao {
         json.append("]");
         return json.toString();
     }
+    
+    public List<Event> getCustomerHistory(int id){
+        List<Event> history = new ArrayList<>();
+        String sql = "Select e.* from registration r join event e on e.eventid = r.eventid where r.userid = ?";
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try(Connection con = DBConnection.createConnection()){
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            rs = ps.executeQuery();  
+            while(rs.next()){
+                Event event = new Event();
+                int eventid = rs.getInt("eventid");
+                String name = rs.getString("name");
+                LocalDateTime time = rs.getTimestamp("time").toLocalDateTime();
+                String location = rs.getString("location");
+                String description = rs.getString("description");
+                event.setId(eventid);
+                event.setName(name);
+                event.setTime(time);
+                event.setLocation(location);
+                event.setDescription(description);
+                
+                history.add(event);
+                
+               
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return history;
+    }
+    public boolean cancelRegistration(int userId, int eventId) {
+        String sql = "DELETE FROM registration WHERE userid = ? AND eventid = ?";
 
+        try (Connection con = DBConnection.createConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+            ps.setInt(2, eventId);
+
+            int rowsAffected = ps.executeUpdate();
+
+            System.out.println("Cancelled registration - User: " + userId + ", Event: " + eventId + ", Rows affected: " + rowsAffected);
+
+            return rowsAffected > 0;
+
+        } catch (Exception e) {
+            System.err.println("Error cancelling registration: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
 }

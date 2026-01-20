@@ -22,7 +22,7 @@ public class LoginDao {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                  user = new User();
-                user.setId(rs.getInt("userid")); // set userId
+                user.setId(rs.getInt("userid"));
                 user.setUsername(rs.getString("username"));
             }
 

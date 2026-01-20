@@ -45,6 +45,6 @@ public class Event {
     public void setOrganizationId(int organizationId) {this.organizationId = organizationId;}
     public String getFormattedDate() { return time.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));}
     public String getFormattedTime12() {return time.format(DateTimeFormatter.ofPattern("h:mm a"));}
-     public String getTimeFormattedForInput() {return time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")); }
+    public String getTimeFormattedForInput() {return time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")); }
 
 }

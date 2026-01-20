@@ -24,9 +24,7 @@ public class AdminFormDao {
         
         try {
             con = DBConnection.createConnection();
-            con.setAutoCommit(false); // Start transaction
-            
-            // Step 1: Insert into EVENT table
+            con.setAutoCommit(false);
             String eventQuery = "INSERT INTO event (name, time, location, description) VALUES (?, ?, ?, ?)";
             psEvent = con.prepareStatement(eventQuery, Statement.RETURN_GENERATED_KEYS);
             psEvent.setString(1, bean.getName());
@@ -40,8 +38,6 @@ public class AdminFormDao {
                 con.rollback();
                 return "FAIL: Event not inserted";
             }
-            
-            // Step 2: Get the generated EventID
             generatedKeys = psEvent.getGeneratedKeys();
             int eventId = 0;
             if (generatedKeys.next()) {
@@ -50,8 +46,6 @@ public class AdminFormDao {
                 con.rollback();
                 return "FAIL: No event ID generated";
             }
-            
-            // Step 3: Insert into EVENTORG bridge table
             String eventOrgQuery = "INSERT INTO eventorg (eventid, organizationid) VALUES (?, ?)";
             psEventOrg = con.prepareStatement(eventOrgQuery);
             psEventOrg.setInt(1, eventId);
@@ -63,13 +57,10 @@ public class AdminFormDao {
                 con.rollback();
                 return "FAIL: Bridge table insert failed";
             }
-            
-            // Commit transaction
             con.commit();
             return "SUCCESS";
             
         } catch (SQLException e) {
-            // Rollback on error
             try {
                 if (con != null) {
                     con.rollback();
@@ -91,10 +82,7 @@ public class AdminFormDao {
             } catch(Exception e) {}
         }
     }
-    
-    /**
-     * Update existing event and its organization relationship
-     */
+
     public String updateEvent(Event bean, int organizationId) {
         Connection con = null;
         PreparedStatement psEvent = null;
@@ -102,9 +90,8 @@ public class AdminFormDao {
         
         try {
             con = DBConnection.createConnection();
-            con.setAutoCommit(false); // Start transaction
-            
-            // Step 1: Update EVENT table
+            con.setAutoCommit(false);
+
             String eventQuery = "UPDATE event SET name = ?, time = ?, location = ?, description = ? WHERE eventid = ?";
             psEvent = con.prepareStatement(eventQuery);
             psEvent.setString(1, bean.getName());
@@ -120,27 +107,22 @@ public class AdminFormDao {
                 return "NO_RECORD_FOUND";
             }
             
-            // Step 2: Update EVENTORG bridge table
-            // Delete old relationship and insert new one
             String deleteEventOrgQuery = "DELETE FROM eventorg WHERE eventid = ?";
             psEventOrg = con.prepareStatement(deleteEventOrgQuery);
             psEventOrg.setInt(1, bean.getId());
             psEventOrg.executeUpdate();
             psEventOrg.close();
-            
-            // Insert new relationship
+
             String insertEventOrgQuery = "INSERT INTO eventorg (eventid, organizationid) VALUES (?, ?)";
             psEventOrg = con.prepareStatement(insertEventOrgQuery);
             psEventOrg.setInt(1, bean.getId());
             psEventOrg.setInt(2, organizationId);
             psEventOrg.executeUpdate();
-            
-            // Commit transaction
+
             con.commit();
             return "SUCCESS";
             
         } catch (SQLException e) {
-            // Rollback on error
             try {
                 if (con != null) {
                     con.rollback();
@@ -161,11 +143,6 @@ public class AdminFormDao {
             } catch(Exception e) {}
         }
     }
-    
-    /**
-     * Get event with organization info by eventId
-     * Useful for editing
-     */
     public Event getEventById(int eventId) {
         Connection con = null;
         PreparedStatement ps = null;
@@ -173,8 +150,7 @@ public class AdminFormDao {
         Event event = null;
         
         try {
-            con = DBConnection.createConnection();
-            
+            con = DBConnection.createConnection();          
             String query = "SELECT e.eventid, e.name, e.time, e.location, e.description, eo.organizationid " +
                           "FROM event e " +
                           "LEFT JOIN eventorg eo ON e.eventid = eo.eventid " +
@@ -192,7 +168,6 @@ public class AdminFormDao {
                 event.setLocation(rs.getString("location"));
                 event.setDescription(rs.getString("description"));
                 event.setOrganizationId(rs.getInt("organizationid"));
-                // You may want to add organizationId to AdminFormBean to store this
             }
             
         } catch (SQLException e) {
@@ -205,10 +180,6 @@ public class AdminFormDao {
         
         return event;
     }
-    
-    /**
-     * Delete event (also deletes from bridge table due to CASCADE or manual delete)
-     */
     public String deleteEvent(int eventId) {
         Connection con = null;
         PreparedStatement psEventOrg = null;
@@ -216,15 +187,11 @@ public class AdminFormDao {
         System.out.print("Debug");
         try {
             con = DBConnection.createConnection();
-            con.setAutoCommit(false);
-            
-            // First delete from bridge table
+            con.setAutoCommit(false);       
             String deleteEventOrgQuery = "DELETE FROM eventorg WHERE eventid = ?";
             psEventOrg = con.prepareStatement(deleteEventOrgQuery);
             psEventOrg.setInt(1, eventId);
-            psEventOrg.executeUpdate();
-            
-            // Then delete from event table
+            psEventOrg.executeUpdate();           
             String deleteEventQuery = "DELETE FROM event WHERE eventid = ?";
             psEvent = con.prepareStatement(deleteEventQuery);
             psEvent.setInt(1, eventId);
