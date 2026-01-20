@@ -397,17 +397,12 @@
         </section>
         <section id="services" class="mb-16 pt-10">
             <h2 class="text-3xl sm:text-4xl font-extrabold text-center mb-6">Our Core Services</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-primary-accent">
                     <span class="text-3xl text-primary-accent">🛠️</span>
                     <h3 class="text-xl font-bold mt-2 mb-2">Volunteer Matching</h3>
                     <p class="text-gray-600">Find opportunities based on your skills, location, and availability. Filter and apply instantly.</p>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-primary-accent">
-                    <span class="text-3xl text-primary-accent">📈</span>
-                    <h3 class="text-xl font-bold mt-2 mb-2">Impact Tracking</h3>
-                    <p class="text-gray-600">See your hours, donations, and direct community impact in real-time on your personal dashboard.</p>
-                </div>
+                </div>              
                 <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-primary-accent">
                     <span class="text-3xl text-primary-accent">📢</span>
                     <h3 class="text-xl font-bold mt-2 mb-2">Project Listings</h3>

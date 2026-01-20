@@ -4,15 +4,12 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="bean.Event" %>
 <%@ page import="dao.ApplicationDao" %>
-
 <%
     ApplicationDao dao = new ApplicationDao();
     List<Event> events = dao.getAllEvent();
 
     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     DateTimeFormatter timeFormatter12 = DateTimeFormatter.ofPattern("h:mm a");
-    
-    // Get unique locations for filter
     List<String> uniqueLocations = new ArrayList<String>();
     if (events != null && !events.isEmpty()) {
         for (Event event : events) {
@@ -22,7 +19,6 @@
         }
     }
 %>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -56,25 +52,18 @@
 </style>
 </head>
 <body class="bg-web-bg font-sans text-text-dark min-h-screen flex flex-col">
-
 <%@ include file="header.jsp" %>
 <%@ include file="popupNotification.jsp" %>  
-
 <main class="flex-1 max-w-7xl mx-auto pt-8 pb-16 px-4 sm:px-6 lg:px-8">
     <h1 class="text-4xl font-extrabold text-center mb-8">Available Programs</h1>
-    
-    <!-- Filter Section -->
     <div class="bg-white p-6 rounded-xl shadow-lg mb-6">
         <h2 class="text-xl font-bold mb-4">Filter Events</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <!-- Search by Name -->
             <div>
                 <label class="block text-sm font-semibold mb-2">Search Event</label>
                 <input type="text" id="searchInput" placeholder="Search by name..." 
                        class="w-full p-2 border rounded focus:ring-2 focus:ring-primary-accent outline-none">
             </div>
-            
-            <!-- Filter by Location -->
             <div>
                 <label class="block text-sm font-semibold mb-2">Location</label>
                 <select id="locationFilter" class="w-full p-2 border rounded focus:ring-2 focus:ring-primary-accent outline-none">
@@ -88,26 +77,19 @@
                     %>
                 </select>
             </div>
-            
-            <!-- Filter by Date Range -->
             <div>
                 <label class="block text-sm font-semibold mb-2">Date From</label>
                 <input type="date" id="dateFilter" 
                        class="w-full p-2 border rounded focus:ring-2 focus:ring-primary-accent outline-none">
             </div>
         </div>
-    </div>
-    
+    </div>   
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="eventsContainer">
         <%
             if (events != null && !events.isEmpty()) {
-                // Get userId from session
-                Integer sessionUserId = (Integer) session.getAttribute("userId");
-                
+                Integer sessionUserId = (Integer) session.getAttribute("userId");              
                 for (Event event : events) {
                     boolean isRegistered = false;
-                    
-                    // Check if user is logged in and already registered
                     if (sessionUserId != null) {
                         isRegistered = dao.isUserRegistered(sessionUserId, event.getId());
                     }
@@ -116,14 +98,12 @@
                  data-name="<%= event.getName().toLowerCase() %>"
                  data-location="<%= event.getLocation() %>"
                  data-date="<%= event.getTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) %>"
-                 data-registered="<%= isRegistered %>">
-                
+                 data-registered="<%= isRegistered %>">               
                 <h3 class="text-xl font-bold mb-2"><%= event.getName() %></h3>
                 <p class="text-gray-600 mb-1"><strong>Description:</strong> <%= event.getDescription() %></p>
                 <p class="text-gray-600 mb-1"><strong>Location:</strong> <%= event.getLocation() %></p>
                 <p class="text-gray-600 mb-3"><strong>Date:</strong> <%= event.getTime().format(dateFormatter) %></p>
-                <p class="text-gray-600 mb-3"><strong>Time:</strong> <%= event.getTime().format(timeFormatter12) %></p>
-                
+                <p class="text-gray-600 mb-3"><strong>Time:</strong> <%= event.getTime().format(timeFormatter12) %></p>            
                 <% if (isRegistered) { %>
                     <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mb-2">
                         <strong>✓ Already Registered</strong>
@@ -150,13 +130,11 @@
         %>
     </div>
 </main>
-
 <footer class="bg-text-dark text-white py-6 mt-auto">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm">
         &copy; 2025 E-Community Service Platform. All rights reserved.
     </div>
 </footer>
-
 <div id="floatingForm" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[100] hidden">
     <form action="ApplicationServlet" method="post" class="bg-white p-6 rounded-xl shadow-2xl w-96">
         <h2 class="text-xl font-bold mb-4" id="formTitle">Apply for Program</h2>
@@ -172,7 +150,6 @@
         </div>
     </form>
 </div>
-
 <script>
     tailwind.config = {
         theme: {
@@ -190,8 +167,6 @@
             }
         }
     }
-    
-    // Mobile menu toggle
     const mobileMenuButton = document.getElementById('mobile-menu-button');
     if (mobileMenuButton) {
         mobileMenuButton.addEventListener('click', function() {
@@ -199,8 +174,6 @@
             menu.classList.toggle('hidden');
         });
     }
-    
-    // Login display
     const urlParams = new URLSearchParams(window.location.search);
     const logged = urlParams.get('logged');
     if (logged) {
@@ -216,8 +189,6 @@
             flexContainer.prepend(welcome);
         }
     }
-    
-    // Form functions
     function openForm(eventName, eventId) {
         document.getElementById('floatingForm').classList.remove('hidden');
         document.getElementById('formTitle').textContent = 'Apply for: ' + eventName;
@@ -227,8 +198,6 @@
     document.getElementById('closeForm').addEventListener('click', function() {
         document.getElementById('floatingForm').classList.add('hidden');
     });
-    
-    // Filter functionality
     function filterEvents() {
         const searchTerm = document.getElementById('searchInput').value.toLowerCase();
         const locationFilter = document.getElementById('locationFilter').value;
@@ -245,23 +214,15 @@
             const isRegistered = card.getAttribute('data-registered') === 'true';
             
             let showCard = true;
-            
-            // Search filter
             if (searchTerm && !name.includes(searchTerm)) {
                 showCard = false;
-            }
-            
-            // Location filter
+            }         
             if (locationFilter && location !== locationFilter) {
                 showCard = false;
             }
-            
-            // Date filter (show events from selected date onwards)
             if (dateFilter && date < dateFilter) {
                 showCard = false;
             }
-          
-            // Show or hide card
             if (showCard) {
                 card.style.display = 'block';
                 visibleCount++;
@@ -281,14 +242,11 @@
             }
         }
     }
-    // Add event listeners for filters
     document.getElementById('searchInput').addEventListener('input', filterEvents);
     document.getElementById('locationFilter').addEventListener('change', filterEvents);
     document.getElementById('dateFilter').addEventListener('change', filterEvents);
     document.getElementById('statusFilter').addEventListener('change', filterEvents);
     document.getElementById('resetFilters').addEventListener('click', resetFilters);
-    
-    // Initialize count on page load
     window.addEventListener('DOMContentLoaded', function() {
         filterEvents();
     });
