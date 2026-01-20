@@ -41,7 +41,6 @@ public class ManageOrgServlet extends HttpServlet {
         if("add".equalsIgnoreCase(action)) {
             String name = request.getParameter("organizationName");
             String email = request.getParameter("organizationEmail");
-
             if(name != null && email != null) {
                 Organization org = new Organization();
                 org.setOrganizationName(name);
@@ -51,25 +50,21 @@ public class ManageOrgServlet extends HttpServlet {
                 if (added) {
                 response.sendRedirect("manageOrganizations.jsp?added=true");
                 } else {
-                    response.sendRedirect("manageOrganizations.jsp?error=true&message=" + URLEncoder.encode("Failed to add organization", "UTF-8"));
+                    response.sendRedirect("manageOrganizations.jsp?error=true");
                 }
                 return;
             }
-
         } else if("edit".equalsIgnoreCase(action)) {
             String idStr = request.getParameter("organizationId");
             String name = request.getParameter("organizationName");
             String email = request.getParameter("organizationEmail");
-
             if(idStr != null && name != null && email != null) {
                 int id = Integer.parseInt(idStr);
                 Organization org = new Organization();
                 org.setOrganizationId(id);
                 org.setOrganizationName(name);
                 org.setOrganizationEmail(email);
-
-                boolean updated = orgDao.updateOrganization(org);
-               
+                boolean updated = orgDao.updateOrganization(org);              
                  if (updated) {
                     response.sendRedirect("manageOrganizations.jsp?updated=true");
                 } else {
@@ -92,13 +87,11 @@ public class ManageOrgServlet extends HttpServlet {
             }
                return; 
         }
-
+        
         List<Organization> organizationList = orgDao.getAllOrganizations();
         request.setAttribute("organizations", organizationList);
-
         request.getRequestDispatcher("manageOrganizations.jsp").forward(request, response);
-    }
-    
+    }  
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

@@ -37,14 +37,12 @@ public class eventRegistrationServlet extends HttpServlet {
         
         try {
             ApplicationDao dao = new ApplicationDao();
-            String jsonData = dao.getEventStatisticsJSON();
-            
+            String jsonData = dao.getEventStatisticsJSON();          
             out.print(jsonData);
             out.flush();
             
         } catch (Exception e) {
             e.printStackTrace();
-            // Return error JSON
             out.print("{\"error\": \"" + e.getMessage() + "\"}");
         }
     }

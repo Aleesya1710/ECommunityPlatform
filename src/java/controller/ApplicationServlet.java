@@ -16,19 +16,10 @@ public class ApplicationServlet extends HttpServlet {
         String phoneNum = request.getParameter("phoneNum");
         String ICnum = request.getParameter("ICnum");
         int eventID = Integer.parseInt(request.getParameter("eventID"));
-
-        HttpSession session = request.getSession(false);
-        Integer userID = null;
-
-        if (session != null && session.getAttribute("userID") != null) {
-            userID = (Integer) session.getAttribute("userID");
-        }
-
-        //DAO
+        HttpSession session = request.getSession(true);
+        Integer userID = (Integer) session.getAttribute("userId");
         ApplicationDao dao = new ApplicationDao();
-        boolean success = dao.insertRegistration(
-                name, phoneNum, ICnum, userID, eventID
-        );
+        boolean success = dao.insertRegistration(name, phoneNum, ICnum, userID, eventID);
 
         if (success) {
             response.sendRedirect("application.jsp?registered=true");

@@ -33,13 +33,11 @@ public class AdminFormServlet extends HttpServlet {
             String description = request.getParameter("description");
             String organizationIdString = request.getParameter("organizationId");
             
-
             if (title == null || title.trim().isEmpty() ||
                 dateString == null || dateString.trim().isEmpty() ||
                 location == null || location.trim().isEmpty() ||
                 description == null || description.trim().isEmpty() ||
-                organizationIdString == null || organizationIdString.trim().isEmpty()) {
-                
+                organizationIdString == null || organizationIdString.trim().isEmpty()) {             
                 request.setAttribute("errMessage", "All fields are required!");
                 request.getRequestDispatcher("/adminForm.jsp").forward(request, response);
                 return;
@@ -56,8 +54,7 @@ public class AdminFormServlet extends HttpServlet {
             
             if (eventIdString != null && !eventIdString.isEmpty()) {
                 eventBean.setId(Integer.parseInt(eventIdString));
-            }
-            
+            }            
             AdminFormDao adminFormDao = new AdminFormDao();
             String result;
             
