@@ -174,7 +174,6 @@
     </style>
 
     <script>
-        // Tailwind configuration
         tailwind.config = {
             theme: {
                 extend: {
@@ -195,10 +194,7 @@
 </head>
 
 <body class="bg-web-bg font-sans text-text-dark min-h-screen">
-
-    <!-- Header / Navigation Bar -->
 <%
-    // --- Session handling ---
     HttpSession userSession = request.getSession(false);
     Integer userId = null;
     String userName = null;
@@ -209,12 +205,8 @@
         userName = (String) userSession.getAttribute("username");
         role = (String) userSession.getAttribute("role");
     }
-
-    // Ensure role is never null
     if (role == null) role = "";
 %>
-
-<!-- Header / Navigation -->
 <header class="shadow-md bg-white sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-20">
@@ -223,12 +215,13 @@
                     E-Community <span class="text-primary-accent">Platform</span>
                 </span>
             </div>
-
-            <%-- Navigation links (only for non-staff) --%>
             <% if (!"staff".equals(role)) { %>
                 <nav class="hidden md:flex space-x-8">
-                    <a href="dashboard.html#homes" class="nav-link font-semibold py-2 rounded-lg transition duration-150 ease-in-out">HOME</a>
+                    <a href="dashboard.jsp" class="nav-link font-semibold py-2 rounded-lg transition duration-150 ease-in-out">HOME</a>
                     <a href="application.jsp" class="nav-link font-semibold py-2 rounded-lg transition duration-150 ease-in-out">SERVICES</a>
+                    <% if (userId != null) { %>
+                    <a href="programHistory.jsp" class="nav-link font-semibold py-2 rounded-lg transition duration-150 ease-in-out">MY PROGRAMS</a>
+                    <% } %>
                     <a href="donation.jsp" class="nav-link font-semibold py-2 rounded-lg transition duration-150 ease-in-out">DONATIONS</a>
                 </nav>
             <% } %>
@@ -253,12 +246,10 @@
             </div>
         </div>
     </div>
-
-    <%-- Mobile menu --%>
     <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100">
         <% if (!"staff".equals(role)) { %>
         <div class="pt-2 pb-3 space-y-1 px-3">
-            <a href="dashboard.html" class="nav-link block px-3 py-2 text-base font-medium">HOME</a>
+            <a href="dashboard.jsp" class="nav-link block px-3 py-2 text-base font-medium">HOME</a>
             <a href="application.jsp" class="nav-link block px-3 py-2 text-base font-medium">SERVICES</a>
             <a href="donation.jsp" class="nav-link block px-3 py-2 text-base font-medium">DONATIONS</a>
         </div>
@@ -273,11 +264,7 @@
         </div>
     </div>
 </header>
-
-    <!-- Main Content Container -->
     <main class="max-w-7xl mx-auto pt-8 pb-16 px-4 sm:px-6 lg:px-8">
-
-        <!-- HOME Section -->
         <section id="home" class="mb-16 bg-white rounded-2xl shadow-2xl overflow-hidden p-6 sm:p-10">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
 
@@ -290,11 +277,11 @@
                     </p>
 
                     <div class="flex flex-col sm:flex-row gap-3">
-                        <a href="application.html" class="btn-primary inline-flex items-center justify-center px-8 py-3 text-lg font-bold rounded-full shadow-xl">
+                        <a href="application.jsp" class="btn-primary inline-flex items-center justify-center px-8 py-3 text-lg font-bold rounded-full shadow-xl">
                             Explore Opportunities
                         </a>
 
-                        <a href="#donations" class="inline-flex items-center justify-center px-8 py-3 text-lg font-bold rounded-full border-2 border-primary-accent text-text-dark hover:bg-web-bg transition">
+                        <a href="donation.jsp" class="inline-flex items-center justify-center px-8 py-3 text-lg font-bold rounded-full border-2 border-primary-accent text-text-dark hover:bg-web-bg transition">
                             Support a Cause
                         </a>
                     </div>
@@ -365,7 +352,6 @@
                             </div>
                         </div>
 
-                        <!-- Controls -->
                         <div class="hero-controls">
                             <button class="hero-btn prev" id="heroPrev" aria-label="Previous slide">&#10094;</button>
                             <button class="hero-btn next" id="heroNext" aria-label="Next slide">&#10095;</button>
@@ -387,7 +373,6 @@
             </div>
         </section>
 
-        <!-- Who We Are / Mission / Vision -->
         <section class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
             <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
                 <h2 id="who-we-are" class="text-2xl font-bold mb-3 border-b-2 border-primary-accent pb-2">Who We Are</h2>
@@ -410,8 +395,6 @@
                 </p>
             </div>
         </section>
-
-        <!-- SERVICES Section -->
         <section id="services" class="mb-16 pt-10">
             <h2 class="text-3xl sm:text-4xl font-extrabold text-center mb-6">Our Core Services</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -432,15 +415,13 @@
                 </div>
             </div>
         </section>
-
-        <!-- DONATIONS Section -->
         <section id="donations" class="pt-10">
             <h2 class="text-3xl sm:text-4xl font-extrabold text-center mb-6">Support Our Cause</h2>
             <div class="bg-white p-8 rounded-xl shadow-2xl text-center">
                 <p class="text-lg text-gray-600 mb-6">
                     Your contribution helps us keep the platform running, supporting hundreds of community organizations and thousands of volunteers every day.
                 </p>
-                <a href="login.jsp" class="btn-primary px-8 py-3 text-lg font-bold rounded-full shadow-lg hover:shadow-xl transition duration-300 uppercase">
+                <a href="donation.jsp" class="btn-primary px-8 py-3 text-lg font-bold rounded-full shadow-lg hover:shadow-xl transition duration-300 uppercase">
                     Make a Donation
                 </a>
                 <p class="text-sm mt-4 text-gray-500">All donations are secure and fully tax-deductible.</p>
@@ -448,8 +429,6 @@
         </section>
 
     </main>
-
-    <!-- Footer -->
     <footer class="bg-text-dark text-white py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm">
             &copy; 2025 E-Community Service Platform. All rights reserved.
@@ -457,7 +436,6 @@
     </footer>
 
     <script>
-        // Smooth scrolling
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -465,15 +443,11 @@
                 document.getElementById('mobile-menu').classList.add('hidden');
             });
         });
-
-        // Hide login button if logged in
         const urlParams = new URLSearchParams(window.location.search);
         const logged = urlParams.get('logged');
         if (logged) {
             document.getElementById('login').style.display = 'none';
         }
-
-        // HERO slider logic (basic)
         document.addEventListener('DOMContentLoaded', function () {
             const slides = document.querySelectorAll('#heroSlider .hero-slide');
             const dots = document.querySelectorAll('#heroDots .hero-dot');
@@ -506,7 +480,6 @@
             function stop() { if (timer) clearInterval(timer); }
             function restart() { stop(); start(); }
 
-            // pause on hover
             const slider = document.getElementById('heroSlider');
             slider.addEventListener('mouseenter', stop);
             slider.addEventListener('mouseleave', start);

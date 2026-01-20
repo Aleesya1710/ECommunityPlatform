@@ -121,14 +121,10 @@ DateTimeFormatter timeFormatter12 = DateTimeFormatter.ofPattern("h:mm a");
             }
         }
     }
-
-    // Mobile menu toggle
     document.getElementById('mobile-menu-button').addEventListener('click', function() {
         const menu = document.getElementById('mobile-menu');
         menu.classList.toggle('hidden');
     });
-
-    // Check if user is logged in
     const urlParams = new URLSearchParams(window.location.search);
     const logged = urlParams.get('logged');
     if (logged) {
@@ -138,15 +134,11 @@ DateTimeFormatter timeFormatter12 = DateTimeFormatter.ofPattern("h:mm a");
         welcome.textContent = 'Welcome, ' + logged + '!';
         document.querySelector('.flex.items-center.space-x-4').prepend(welcome);
     }
-
-    // Open form function
     function openForm(eventName, eventId) {
         document.getElementById('floatingForm').classList.remove('hidden');
         document.getElementById('formTitle').textContent = 'Apply for: ' + eventName;
         document.getElementById('eventID').value = eventId;
     }
-
-    // Close form
     document.getElementById('closeForm').addEventListener('click', function() {
         document.getElementById('floatingForm').classList.add('hidden');
     });

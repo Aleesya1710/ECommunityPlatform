@@ -53,8 +53,7 @@
         <p class="text-gray-500">Add, edit, or delete organizations without leaving this page.</p>
     </header>
 
-    <div id="listView" class="view">
-        
+    <div id="listView" class="view">      
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-semibold text-gray-800">Organizations</h2>
             <button class="btn-custom py-2 px-4 rounded-lg shadow-md flex items-center" onclick="showAddModal()">+ Add Organization</button>
@@ -84,10 +83,6 @@
         </div>
     </div>
 </div>
-<!-- Back to Dashboard FAB -->
-
-
-<!-- ADD MODAL -->
 <div id="addModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-lg shadow-2xl w-full max-w-sm p-6">
         <h3 class="text-xl font-semibold text-gray-900 mb-4">Add New Organization</h3>
@@ -102,8 +97,6 @@
         </form>
     </div>
 </div>
-
-<!-- EDIT MODAL -->
 <div id="editModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-lg shadow-2xl w-full max-w-sm p-6">
         <h3 class="text-xl font-semibold text-gray-900 mb-4">Edit Organization</h3>
@@ -119,8 +112,6 @@
         </form>
     </div>
 </div>
-
-<!-- DELETE MODAL -->
 <div id="deleteModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-lg shadow-2xl w-full max-w-sm p-6">
         <h3 class="text-xl font-semibold text-red-600 mb-4">Confirm Deletion</h3>
@@ -131,7 +122,6 @@
         </div>
     </div>
 </div>
-
 <script>
     function showAddModal() { document.getElementById('addModal').classList.remove('hidden'); }
     function hideAddModal() { document.getElementById('addModal').classList.add('hidden'); }

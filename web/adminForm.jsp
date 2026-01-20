@@ -42,9 +42,7 @@
         
         if (eventId != null && !eventId.isEmpty()) {
 
-        }
-        
-   
+        }     
     %>
 
     <jsp:include page="header.jsp">
@@ -121,7 +119,7 @@
                     Cancel
                 </a>
                 <button type="submit" id="saveButton" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition duration-200">
-                    <%= (eventId != null && !eventId.isEmpty()) ? "Update Event" : "Create Event" %>
+                    <%= (eventId != null && !eventId.isEmpty()) ? "Update Program" : "Create Program" %>
                 </button>
             </div>
         </form>

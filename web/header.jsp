@@ -53,6 +53,7 @@
             <nav class="hidden md:flex space-x-8">
                 <a href="dashboard.jsp" class="nav-link font-semibold py-2 rounded-lg transition duration-150 ease-in-out">HOME</a>
                 <a href="application.jsp" class="nav-link font-semibold py-2 rounded-lg transition duration-150 ease-in-out">SERVICES</a>
+                <a href="programHistory.jsp" class="nav-link font-semibold py-2 rounded-lg transition duration-150 ease-in-out">MY PROGRAMS</a>
                 <a href="donation.jsp" class="nav-link font-semibold py-2 rounded-lg transition duration-150 ease-in-out">DONATIONS</a>
             </nav>
         <% } %>

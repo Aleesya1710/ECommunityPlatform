@@ -40,7 +40,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-gray-500 text-sm font-medium">Create New</p>
-                    <p class="text-2xl font-bold text-gray-900 mt-1">Event</p>
+                    <p class="text-2xl font-bold text-gray-900 mt-1">Program</p>
                 </div>
                 <div class="bg-green-100 p-3 rounded-full">
                     <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -121,13 +121,10 @@
         document.getElementById('emptyState').style.display = 'none';
         
         fetch('EventRegistrationServlet')
-            .then(response => {
-              //  console.log('Response status:', response.status);
+            .then(response => {            
                 return response.json();
             })
-            .then(data => {
-             //   console.log('Received data:', data);
-                
+            .then(data => {              
                 if (data.length === 0) {
                     showEmptyState();
                 } else {
@@ -228,8 +225,7 @@
     }
     
      function generateInsights(data) {
-        const insightsDiv = document.getElementById('insights');   
-       // console.log('generateInsights called with:', data);      
+        const insightsDiv = document.getElementById('insights');       
         if (!data || data.length === 0) {
             insightsDiv.innerHTML = '<p class="text-gray-500">No data available</p>';
             return;
@@ -253,7 +249,7 @@
                     leastPopular = item;
                 }
             }          
-         /*   console.log('Calculated stats:', {
+         /*   console.log('debug', {
                 totalVolunteers: totalVolunteers,
                 avgVolunteers: avgVolunteers,
                 mostPopular: mostPopular,
@@ -268,9 +264,9 @@
                 html += '<p class="text-orange-600"><strong>⚠️ Low interest:</strong> ' + leastPopular.eventName + ' (' + leastPopular.volunteerCount + ' volunteers)</p>';
             }         
             insightsDiv.innerHTML = html;
-           // console.log('Insights updated successfully');     
+           // console.log('debug');     
         } catch (error) {
-          //  console.error('Error in generateInsights:', error);
+          //  console.error('debug1', error);
             insightsDiv.innerHTML = '<p class="text-red-600">Error calculating insights</p>';
         }
     }

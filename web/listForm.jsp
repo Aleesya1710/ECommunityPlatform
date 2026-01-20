@@ -5,20 +5,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html lang="en">
-<%
-    HttpSession userSession = request.getSession(false);
-    Integer userId = null;
-    String userName = null;
-    if (userSession != null) {
-        userId = (Integer) userSession.getAttribute("userId");
-        userName = (String) userSession.getAttribute("username");
-    }
-    if (userId == null) {
-        response.sendRedirect("login.jsp?error=Please login to view events");
-        return;
-    }
-    
-
+<%  
     ApplicationDao dao = new ApplicationDao();
     List<Event> events = dao.getAllEvent();
     request.setAttribute("events", events);

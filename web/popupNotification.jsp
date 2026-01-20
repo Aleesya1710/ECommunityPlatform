@@ -158,6 +158,9 @@
     } else if (urlParams.get('error') === 'true') {
         showToast('An error occurred. Please try again.', 'error');
         shown = true;
+    }else if (urlParams.get('cancel') === 'true') {
+        showToast('Registration Canceled Successfully.', 'success');
+        shown = true;
     }
           if (shown) {
         setTimeout(() => {
