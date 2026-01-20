@@ -1,6 +1,7 @@
 <%@page import="java.time.format.DateTimeFormatter"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ page import="bean.Event" %>
 <%@ page import="dao.ApplicationDao" %>
 
@@ -8,9 +9,18 @@
     ApplicationDao dao = new ApplicationDao();
     List<Event> events = dao.getAllEvent();
 
-
-DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-DateTimeFormatter timeFormatter12 = DateTimeFormatter.ofPattern("h:mm a");
+    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    DateTimeFormatter timeFormatter12 = DateTimeFormatter.ofPattern("h:mm a");
+    
+    // Get unique locations for filter
+    List<String> uniqueLocations = new ArrayList<String>();
+    if (events != null && !events.isEmpty()) {
+        for (Event event : events) {
+            if (!uniqueLocations.contains(event.getLocation())) {
+                uniqueLocations.add(event.getLocation());
+            }
+        }
+    }
 %>
 
 <!DOCTYPE html>
@@ -22,7 +32,6 @@ DateTimeFormatter timeFormatter12 = DateTimeFormatter.ofPattern("h:mm a");
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
 <style>
-    /* Your existing styles */
     .btn-primary {
         background-color: #F7DE4F;
         color: #333333;
@@ -53,27 +62,87 @@ DateTimeFormatter timeFormatter12 = DateTimeFormatter.ofPattern("h:mm a");
 
 <main class="flex-1 max-w-7xl mx-auto pt-8 pb-16 px-4 sm:px-6 lg:px-8">
     <h1 class="text-4xl font-extrabold text-center mb-8">Available Programs</h1>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    
+    <!-- Filter Section -->
+    <div class="bg-white p-6 rounded-xl shadow-lg mb-6">
+        <h2 class="text-xl font-bold mb-4">Filter Events</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Search by Name -->
+            <div>
+                <label class="block text-sm font-semibold mb-2">Search Event</label>
+                <input type="text" id="searchInput" placeholder="Search by name..." 
+                       class="w-full p-2 border rounded focus:ring-2 focus:ring-primary-accent outline-none">
+            </div>
+            
+            <!-- Filter by Location -->
+            <div>
+                <label class="block text-sm font-semibold mb-2">Location</label>
+                <select id="locationFilter" class="w-full p-2 border rounded focus:ring-2 focus:ring-primary-accent outline-none">
+                    <option value="">All Locations</option>
+                    <%
+                        for (String location : uniqueLocations) {
+                    %>
+                        <option value="<%= location %>"><%= location %></option>
+                    <% 
+                        }
+                    %>
+                </select>
+            </div>
+            
+            <!-- Filter by Date Range -->
+            <div>
+                <label class="block text-sm font-semibold mb-2">Date From</label>
+                <input type="date" id="dateFilter" 
+                       class="w-full p-2 border rounded focus:ring-2 focus:ring-primary-accent outline-none">
+            </div>
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="eventsContainer">
         <%
             if (events != null && !events.isEmpty()) {
+                // Get userId from session
+                Integer sessionUserId = (Integer) session.getAttribute("userId");
+                
                 for (Event event : events) {
+                    boolean isRegistered = false;
+                    
+                    // Check if user is logged in and already registered
+                    if (sessionUserId != null) {
+                        isRegistered = dao.isUserRegistered(sessionUserId, event.getId());
+                    }
         %>
-            <div class='bg-white p-6 rounded-xl shadow-lg border-t-4 border-primary-accent'>
+            <div class='event-card bg-white p-6 rounded-xl shadow-lg border-t-4 <%= isRegistered ? "border-gray-400 opacity-75" : "border-primary-accent" %>'
+                 data-name="<%= event.getName().toLowerCase() %>"
+                 data-location="<%= event.getLocation() %>"
+                 data-date="<%= event.getTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) %>"
+                 data-registered="<%= isRegistered %>">
+                
                 <h3 class="text-xl font-bold mb-2"><%= event.getName() %></h3>
                 <p class="text-gray-600 mb-1"><strong>Description:</strong> <%= event.getDescription() %></p>
                 <p class="text-gray-600 mb-1"><strong>Location:</strong> <%= event.getLocation() %></p>
-                <p class="text-gray-600 mb-3"><strong>Date:</strong> <%= event.getTime().format(dateFormatter)  %></p>
-                <p class="text-gray-600 mb-3"><strong>Time:</strong> <%= event.getTime().format(timeFormatter12)  %></p>
-                <button class="btn-primary px-6 py-2 rounded-full mb-2 applyBtn font-bold shadow-md" 
-                        onclick="openForm('<%= event.getName() %>', <%= event.getId() %>)">
-                    Apply
-                </button>
+                <p class="text-gray-600 mb-3"><strong>Date:</strong> <%= event.getTime().format(dateFormatter) %></p>
+                <p class="text-gray-600 mb-3"><strong>Time:</strong> <%= event.getTime().format(timeFormatter12) %></p>
+                
+                <% if (isRegistered) { %>
+                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mb-2">
+                        <strong>✓ Already Registered</strong>
+                    </div>
+                    <button class="bg-gray-400 text-white px-6 py-2 rounded-full font-bold cursor-not-allowed" disabled>
+                        Registered
+                    </button>
+                <% } else { %>
+                    <button class="btn-primary px-6 py-2 rounded-full mb-2 applyBtn font-bold shadow-md" 
+                            onclick="openForm('<%= event.getName() %>', <%= event.getId() %>)">
+                        Apply
+                    </button>
+                <% } %>
             </div>
         <%
                 }
             } else {
         %>
-            <div class="col-span-2 text-center text-gray-500">
+            <div class="col-span-2 text-center text-gray-500" id="noEvents">
                 <p>No events available at the moment.</p>
             </div>
         <%
@@ -121,26 +190,107 @@ DateTimeFormatter timeFormatter12 = DateTimeFormatter.ofPattern("h:mm a");
             }
         }
     }
-    document.getElementById('mobile-menu-button').addEventListener('click', function() {
-        const menu = document.getElementById('mobile-menu');
-        menu.classList.toggle('hidden');
-    });
+    
+    // Mobile menu toggle
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    if (mobileMenuButton) {
+        mobileMenuButton.addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+    }
+    
+    // Login display
     const urlParams = new URLSearchParams(window.location.search);
     const logged = urlParams.get('logged');
     if (logged) {
-        document.getElementById('login').style.display = 'none';
+        const loginElement = document.getElementById('login');
+        if (loginElement) {
+            loginElement.style.display = 'none';
+        }
         const welcome = document.createElement('p');
         welcome.className = "font-bold text-primary-accent";
         welcome.textContent = 'Welcome, ' + logged + '!';
-        document.querySelector('.flex.items-center.space-x-4').prepend(welcome);
+        const flexContainer = document.querySelector('.flex.items-center.space-x-4');
+        if (flexContainer) {
+            flexContainer.prepend(welcome);
+        }
     }
+    
+    // Form functions
     function openForm(eventName, eventId) {
         document.getElementById('floatingForm').classList.remove('hidden');
         document.getElementById('formTitle').textContent = 'Apply for: ' + eventName;
         document.getElementById('eventID').value = eventId;
     }
+    
     document.getElementById('closeForm').addEventListener('click', function() {
         document.getElementById('floatingForm').classList.add('hidden');
+    });
+    
+    // Filter functionality
+    function filterEvents() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const locationFilter = document.getElementById('locationFilter').value;
+        const dateFilter = document.getElementById('dateFilter').value;
+        
+        
+        const eventCards = document.querySelectorAll('.event-card');
+        let visibleCount = 0;
+        
+        eventCards.forEach(card => {
+            const name = card.getAttribute('data-name');
+            const location = card.getAttribute('data-location');
+            const date = card.getAttribute('data-date');
+            const isRegistered = card.getAttribute('data-registered') === 'true';
+            
+            let showCard = true;
+            
+            // Search filter
+            if (searchTerm && !name.includes(searchTerm)) {
+                showCard = false;
+            }
+            
+            // Location filter
+            if (locationFilter && location !== locationFilter) {
+                showCard = false;
+            }
+            
+            // Date filter (show events from selected date onwards)
+            if (dateFilter && date < dateFilter) {
+                showCard = false;
+            }
+          
+            // Show or hide card
+            if (showCard) {
+                card.style.display = 'block';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+    
+        const noEventsMsg = document.getElementById('noEvents');
+        if (noEventsMsg) {
+            if (visibleCount === 0) {
+                noEventsMsg.style.display = 'block';
+                noEventsMsg.querySelector('p').textContent = 'No events match your filters.';
+            } else {
+                noEventsMsg.style.display = 'none';
+            }
+        }
+    }
+    // Add event listeners for filters
+    document.getElementById('searchInput').addEventListener('input', filterEvents);
+    document.getElementById('locationFilter').addEventListener('change', filterEvents);
+    document.getElementById('dateFilter').addEventListener('change', filterEvents);
+    document.getElementById('statusFilter').addEventListener('change', filterEvents);
+    document.getElementById('resetFilters').addEventListener('click', resetFilters);
+    
+    // Initialize count on page load
+    window.addEventListener('DOMContentLoaded', function() {
+        filterEvents();
     });
 </script>
 

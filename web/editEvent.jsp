@@ -28,7 +28,7 @@
 <body class="bg-yellow-100 min-h-screen flex items-center justify-center p-4">
 
 <div class="bg-white shadow-xl rounded-xl p-8 w-full max-w-lg">
-    <h1 class="text-2xl font-bold mb-6">Edit Event</h1>
+    <h1 class="text-2xl font-bold mb-6">Edit Program</h1>
     <c:if test="${param.error != null}">
         <p class="text-red-600 mb-4">${param.error}</p>
     </c:if>
@@ -36,7 +36,7 @@
     <form action="EditEventServlet" method="post" class="space-y-4">
         <input type="hidden" name="id" value="${event.id}" />
         <div>
-            <label class="block font-semibold">Event Name</label>
+            <label class="block font-semibold">Program Name</label>
             <input type="text" name="name" value="${event.name}" required
                    class="w-full border rounded-lg p-2"/>
         </div>

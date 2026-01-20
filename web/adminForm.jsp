@@ -52,14 +52,14 @@
 
     <div class="max-w-2xl mx-auto bg-white shadow-xl rounded-xl mt-20 p-6 md:p-8">
  
-<a href="listForm.jsp" 
+<a href="staffDashboard.jsp" 
    class="btn-custom fixed top-24 left-8 px-4 py-3 rounded-full shadow-lg z-40 flex items-center gap-2">
-    &#8592; Back
+    &#8592; Dashboard
 </a>
         <form id="programForm" action="AdminFormServlet" method="post" class="space-y-5">
             <input type="hidden" id="eventId" name="eventId" value="<%= eventId != null ? eventId : "" %>">
             <div>
-                <label for="title" class="block text-sm font-medium text-gray-700">Event Title *</label>
+                <label for="title" class="block text-sm font-medium text-gray-700">Program Title *</label>
                 <input type="text" id="title" name="title" 
                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:border-indigo-500 focus:ring-indigo-500" 
                        placeholder="e.g., Beach Clean-Up" 
@@ -115,7 +115,7 @@
             </div>
             
             <div class="pt-4 flex justify-end space-x-3">
-                <a href="listForm.jsp" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-200">
+                <a href="staffDashboard.jsp" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-200">
                     Cancel
                 </a>
                 <button type="submit" id="saveButton" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition duration-200">

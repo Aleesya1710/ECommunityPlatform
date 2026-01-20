@@ -78,7 +78,7 @@
 </head>
 <body>
     <div class="login-container">
-        <h1>E-Community Login</h1>
+        <h1><span style="color:black">E-Community</span> Login</h1>
         <c:if test="${not empty errMessage}">
             <div class="error">${errMessage}</div>
         </c:if>

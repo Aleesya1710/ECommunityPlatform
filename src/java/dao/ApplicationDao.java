@@ -49,7 +49,7 @@ public class ApplicationDao {
     
     public List<Event> getAllEvent(){
         List<Event> eventList = new ArrayList<>();     
-        String sql = "Select * from event order by time";
+        String sql = "Select * from event where time >= current_timestamp order by time";
         
         try (Connection con = DBConnection.createConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -163,7 +163,7 @@ public class ApplicationDao {
             
         } catch (SQLException e) {
             e.printStackTrace();
-            return "[]"; // Return empty array on error
+            return "[]"; 
         } finally {
             try { if(rs != null) rs.close(); } catch(Exception e) {}
             try { if(ps != null) ps.close(); } catch(Exception e) {}
@@ -176,7 +176,7 @@ public class ApplicationDao {
     
     public List<Event> getCustomerHistory(int id){
         List<Event> history = new ArrayList<>();
-        String sql = "Select e.* from registration r join event e on e.eventid = r.eventid where r.userid = ?";
+        String sql = "Select e.* from registration r join event e on e.eventid = r.eventid where r.userid = ? order by e.time desc";
         PreparedStatement ps = null;
         ResultSet rs = null;
         try(Connection con = DBConnection.createConnection()){
@@ -194,11 +194,8 @@ public class ApplicationDao {
                 event.setName(name);
                 event.setTime(time);
                 event.setLocation(location);
-                event.setDescription(description);
-                
-                history.add(event);
-                
-               
+                event.setDescription(description);               
+                history.add(event);                            
             }
         }catch(Exception e){
             e.printStackTrace();
@@ -210,21 +207,33 @@ public class ApplicationDao {
 
         try (Connection con = DBConnection.createConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-
             ps.setInt(1, userId);
             ps.setInt(2, eventId);
-
             int rowsAffected = ps.executeUpdate();
-
-            System.out.println("Cancelled registration - User: " + userId + ", Event: " + eventId + ", Rows affected: " + rowsAffected);
-
+            //System.out.println("Cancelled registration - User: " + userId + ", Event: " + eventId + ", Rows affected: " + rowsAffected);
             return rowsAffected > 0;
-
         } catch (Exception e) {
             System.err.println("Error cancelling registration: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
+    }
+    public boolean isUserRegistered(int userId, int eventId) {
+        String sql = "SELECT COUNT(*) FROM registration WHERE userid = ? AND eventid = ?";
+        try (Connection con = DBConnection.createConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, eventId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
     
 }
