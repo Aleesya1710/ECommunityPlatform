@@ -55,6 +55,17 @@
             background-color: transparent;
         }
         
+        .error-message {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border-left: 4px solid #c62828;
+            text-align: left;
+            font-size: 0.9em;
+        }
+        
         label {
             display: block;
             text-align: left;
@@ -117,6 +128,16 @@
     <div class="signup-container">
         <button type="button" class="close-btn" onclick="window.history.back()">×</button>
         <h1>Create Account</h1>
+        
+        <% 
+            String errorMessage = (String) request.getAttribute("errorMessage");
+            if (errorMessage != null && !errorMessage.isEmpty()) {
+        %>
+            <div class="error-message">
+                <%= errorMessage %>
+            </div>
+        <% } %>
+        
         <form action="RegisterServlet" method="POST">
             <label> Full Name: </label>
             <input type="text" name="fullname" placeholder="Full Name" required>
