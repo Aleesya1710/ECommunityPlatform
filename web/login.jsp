@@ -26,10 +26,30 @@
             width: 300px;
             text-align: center;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
         }
         .login-container:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: transparent;
+            color: #999;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            width: auto;
+            padding: 0;
+            margin: 0;
+            line-height: 1;
+            transition: color 0.3s ease;
+        }
+        .close-btn:hover {
+            color: #333;
+            background-color: transparent;
         }
         h1 {
             color: #F7DE4F; 
@@ -44,7 +64,7 @@
             box-sizing: border-box;
             background-color: #FFFFF8; 
         }
-        button {
+        button[type="submit"] {
             background-color: #F7DE4F; 
             color: white;
             padding: 10px 15px;
@@ -57,8 +77,16 @@
             font-weight: bold;
             transition: background-color 0.3s ease;
         }
-        button:hover {
+        button[type="submit"]:hover {
             background-color: #F4D10B;
+        }
+        .error {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
         }
         p {
             margin-top: 15px;
@@ -78,19 +106,18 @@
 </head>
 <body>
     <div class="login-container">
+        <button type="button" class="close-btn" onclick="window.location.href='dashboard.jsp'">×</button>
         <h1><span style="color:black">E-Community</span> Login</h1>
-        <c:if test="${not empty errMessage}">
-            <div class="error">${errMessage}</div>
-        </c:if>
+        <% if (request.getAttribute("errMessage") != null && !request.getAttribute("errMessage").toString().isEmpty()) { %>
+            <div class="error"><%= request.getAttribute("errMessage") %></div>
+        <% } %>
         <form action="LoginServlet" method="post">
             <input type="text" name="username" placeholder="Username" required 
                    value="${param.username != null ? param.username : ''}">
             <input type="password" name="password" placeholder="Password" required>
             <button type="submit">LOGIN</button>
         </form>
-
         <p>Don't have an account? <a href="register.jsp">Sign Up</a></p>
     </div>
 </body>
 </html>
-

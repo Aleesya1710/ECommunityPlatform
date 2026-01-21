@@ -17,7 +17,7 @@
             min-height: 100vh;
             transition: background-color 0.3s;
         }
-
+        
         .signup-container {
             background-color: white; 
             padding: 40px;
@@ -26,25 +26,46 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             text-align: center;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
         }
-
+        
         .signup-container:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
         }
-
+        
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: transparent;
+            color: #999;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            width: auto;
+            padding: 0;
+            margin: 0;
+            line-height: 1;
+            transition: color 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            color: #333;
+            background-color: transparent;
+        }
+        
         label {
             display: block;
             text-align: left;
             margin-right: 5px;
         }
-
-
+        
         h1 {
             color: #F7DE4F; 
             margin-bottom: 20px;
         }
-
+        
         input[type="text"], input[type="password"], input[type="email"] {
             width: 100%;
             padding: 10px;
@@ -55,8 +76,8 @@
             background-color: #FFFFF8; 
             margin-bottom: 20px;  
         }
-
-        button {
+        
+        button[type="submit"] {
             background-color: #F7DE4F; 
             color: white;
             padding: 10px 15px;
@@ -69,23 +90,23 @@
             font-weight: bold;
             transition: background-color 0.3s ease;
         }
-
-        button:hover {
+        
+        button[type="submit"]:hover {
             background-color: #F4D10B;
         }
-
+        
         p {
             margin-top: 15px;
             font-size: 0.9em;
         }
-
+        
         a {
             color: #F4D10B;
             text-decoration: none;
             font-weight: bold;
             transition: color 0.3s;
         }
-
+        
         a:hover {
             text-decoration: underline;
             color: #E2B000;
@@ -94,22 +115,22 @@
 </head>
 <body>
     <div class="signup-container">
+        <button type="button" class="close-btn" onclick="window.history.back()">×</button>
         <h1>Create Account</h1>
         <form action="RegisterServlet" method="POST">
             <label> Full Name: </label>
             <input type="text" name="fullname" placeholder="Full Name" required>
-
+            
             <label> Username: </label>
             <input type="text" name="username" placeholder="Username" required>
-
+            
             <label> Password: </label>
             <input type="password" name="password" placeholder="Password" required>
-
+            
             <label> Confirm Password: </label>
             <input type="password" name="confirmPassword" placeholder="Confirm Password" required>
-
+            
             <button type="submit">SIGN UP</button>
-
         </form>
     </div>
 </body>

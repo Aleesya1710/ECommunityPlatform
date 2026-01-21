@@ -83,6 +83,7 @@
                        class="w-full p-2 border rounded focus:ring-2 focus:ring-primary-accent outline-none">
             </div>
         </div>
+
     </div>   
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="eventsContainer">
         <%
@@ -122,12 +123,22 @@
                 }
             } else {
         %>
-            <div class="col-span-2 text-center text-gray-500" id="noEvents">
-                <p>No events available at the moment.</p>
+            <div class="col-span-2 text-center text-gray-500 py-8" id="noEventsInitial">
+                <p class="text-xl">No events available at the moment.</p>
             </div>
         <%
             }
         %>
+    </div>
+    
+    <div id="noFilterResults" class="hidden col-span-2 text-center py-8">
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 inline-block">
+            <svg class="mx-auto h-12 w-12 text-yellow-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p class="text-xl font-semibold text-gray-700">No events match your filters</p>
+            <p class="text-gray-500 mt-2">Try adjusting your search criteria</p>
+        </div>
     </div>
 </main>
 <footer class="bg-text-dark text-white py-6 mt-auto">
@@ -203,15 +214,15 @@
         const locationFilter = document.getElementById('locationFilter').value;
         const dateFilter = document.getElementById('dateFilter').value;
         
-        
         const eventCards = document.querySelectorAll('.event-card');
+        const noFilterResults = document.getElementById('noFilterResults');
+        const eventsContainer = document.getElementById('eventsContainer');
         let visibleCount = 0;
         
         eventCards.forEach(card => {
             const name = card.getAttribute('data-name');
             const location = card.getAttribute('data-location');
             const date = card.getAttribute('data-date');
-            const isRegistered = card.getAttribute('data-registered') === 'true';
             
             let showCard = true;
             if (searchTerm && !name.includes(searchTerm)) {
@@ -231,22 +242,18 @@
             }
         });
         
-    
-        const noEventsMsg = document.getElementById('noEvents');
-        if (noEventsMsg) {
-            if (visibleCount === 0) {
-                noEventsMsg.style.display = 'block';
-                noEventsMsg.querySelector('p').textContent = 'No events match your filters.';
-            } else {
-                noEventsMsg.style.display = 'none';
-            }
+        if (visibleCount === 0 && eventCards.length > 0) {
+            noFilterResults.classList.remove('hidden');
+            eventsContainer.appendChild(noFilterResults);
+        } else {
+            noFilterResults.classList.add('hidden');
         }
     }
+    
     document.getElementById('searchInput').addEventListener('input', filterEvents);
     document.getElementById('locationFilter').addEventListener('change', filterEvents);
     document.getElementById('dateFilter').addEventListener('change', filterEvents);
-    document.getElementById('statusFilter').addEventListener('change', filterEvents);
-    document.getElementById('resetFilters').addEventListener('click', resetFilters);
+    
     window.addEventListener('DOMContentLoaded', function() {
         filterEvents();
     });
